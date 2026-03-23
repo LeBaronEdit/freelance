@@ -1,0 +1,3845 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculateur Fiscal — Freelance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   LIQUID GLASS — Apple WWDC25 Spec
+   Achromatique · Spéculaire · Cohérent
+   ═══════════════════════════════════════════ */
+
+/* ── THÈME SOMBRE (défaut) ── */
+:root {
+  /* Fond atmosphérique */
+  --bg-mesh: #07070f;
+
+  /* Verre — très peu opaque pour voir la grille à travers */
+  --glass-bg:      rgba(255,255,255,.12);
+  --glass-bg-h:    rgba(255,255,255,.19);
+  --glass-bg-act:  rgba(255,255,255,.26);
+  --glass-bg-deep: rgba(255,255,255,.07);
+
+  /* Rim spéculaire */
+  --rim:           rgba(255,255,255,.16);
+  --rim-side:      rgba(255,255,255,.06);
+
+  /* Bordures */
+  --brd:    rgba(200,210,255,.20);
+  --brd-hi: rgba(210,180,255,.38);
+  --brd-g:  rgba(210,180,255,.38);
+
+  /* Ombres */
+  --shadow-glass: 0 8px 40px rgba(0,0,0,.55), 0 2px 0 rgba(255,255,255,.65) inset, 0 -1px 0 rgba(0,0,0,.25) inset, 0 1px 12px rgba(255,255,255,.06) inset;
+  --shadow-float: 0 20px 70px rgba(0,0,0,.65), 0 2px 0 rgba(255,255,255,.75) inset, 0 1px 16px rgba(255,255,255,.08) inset;
+  --shadow-sm:    0 2px 10px rgba(0,0,0,.35);
+
+  /* Blur — fort pour bien voir la grille floutée */
+  --blur:    36px;
+  --blur-lg: 64px;
+  --blur-sm: 20px;
+
+  /* Couleurs */
+  --acc:#a080ff; --acc-glow:rgba(160,128,255,.20);
+  --blue:#50d0ff; --blue-glow:rgba(80,208,255,.18);
+  --orange:#ffaa40; --orange-glow:rgba(255,170,64,.18);
+  --red:#ff6060; --red-glow:rgba(255,96,96,.18);
+  --green:#50f0a0; --green-glow:rgba(80,240,160,.18);
+
+  --text:#f0f0fa;
+  --text-dim:rgba(240,240,250,.65);
+  --muted:rgba(240,240,250,.32);
+
+  --surf:var(--glass-bg); --surf2:var(--glass-bg-deep);
+  --faint:var(--glass-bg-deep); --bg:#07070f;
+}
+
+/* ── THÈME CLAIR ── */
+[data-theme="light"] {
+  --glass-bg:      rgba(255,255,255,.40);
+  --glass-bg-h:    rgba(255,255,255,.58);
+  --glass-bg-act:  rgba(255,255,255,.68);
+  --glass-bg-deep: rgba(255,255,255,.22);
+
+  --rim:           rgba(255,255,255,.45);
+  --rim-side:      rgba(255,255,255,.18);
+
+  --brd:    rgba(255,255,255,.72);
+  --brd-hi: rgba(255,255,255,.95);
+  --brd-g:  rgba(255,255,255,.95);
+
+  --shadow-glass: 0 8px 32px rgba(80,100,180,.16), 0 1px 0 rgba(255,255,255,.98) inset, 0 -1px 0 rgba(100,120,180,.06) inset;
+  --shadow-float: 0 20px 60px rgba(60,80,160,.22), 0 1px 0 rgba(255,255,255,.99) inset;
+  --shadow-sm:    0 2px 10px rgba(60,80,160,.12);
+
+  --acc:#5030c8; --acc-glow:rgba(80,48,200,.14);
+  --blue:#0080b0; --blue-glow:rgba(0,128,176,.12);
+  --orange:#b05800; --orange-glow:rgba(176,88,0,.12);
+  --red:#b02020; --red-glow:rgba(176,32,32,.12);
+  --green:#108040; --green-glow:rgba(16,128,64,.12);
+
+  --text:#1a1a28;
+  --text-dim:rgba(26,26,40,.65);
+  --muted:rgba(26,26,40,.38);
+
+  --surf:var(--glass-bg); --surf2:var(--glass-bg-deep);
+  --faint:var(--glass-bg-deep); --bg:#ccd8ee;
+}
+
+[data-theme="dark"] {
+  --glass-bg:rgba(255,255,255,.12); --glass-bg-h:rgba(255,255,255,.19);
+  --glass-bg-act:rgba(255,255,255,.26); --glass-bg-deep:rgba(255,255,255,.07);
+  --rim:rgba(255,255,255,.16); --rim-side:rgba(255,255,255,.06);
+  --brd:rgba(200,210,255,.20); --brd-hi:rgba(210,180,255,.38); --brd-g:rgba(210,180,255,.38);
+  --shadow-glass:0 8px 40px rgba(0,0,0,.55),0 2px 0 rgba(255,255,255,.65) inset,0 -1px 0 rgba(0,0,0,.25) inset;
+  --shadow-float:0 20px 70px rgba(0,0,0,.65),0 2px 0 rgba(255,255,255,.75) inset;
+  --shadow-sm:0 2px 10px rgba(0,0,0,.35);
+  --acc:#a080ff; --acc-glow:rgba(160,128,255,.20);
+  --blue:#50d0ff; --blue-glow:rgba(80,208,255,.18);
+  --orange:#ffaa40; --orange-glow:rgba(255,170,64,.18);
+  --red:#ff6060; --red-glow:rgba(255,96,96,.18);
+  --green:#50f0a0; --green-glow:rgba(80,240,160,.18);
+  --text:#f0f0fa; --text-dim:rgba(240,240,250,.65); --muted:rgba(240,240,250,.32);
+  --surf:var(--glass-bg); --surf2:var(--glass-bg-deep); --faint:var(--glass-bg-deep); --bg:#07070f;
+}
+
+/* Transitions fluides */
+*,*::before,*::after { transition: background-color .3s, border-color .3s, color .25s, box-shadow .3s; }
+.rval,.prov-amt,.tmi-val { transition:all .25s !important; }
+*{margin:0;padding:0;box-sizing:border-box;}
+
+/* ── CORPS ── */
+/* ── CORPS ── */
+body {
+  font-family:'Syne',sans-serif;
+  /* Fond + orbes + grille tout en un — backdrop-filter capture tout ça */
+  background-color: #07070f;
+  background-image:
+    linear-gradient(rgba(255,255,255,.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.09) 1px, transparent 1px),
+    radial-gradient(ellipse 55% 45% at 10% 10%,  rgba(80,40,180,.55)  0%, transparent 60%),
+    radial-gradient(ellipse 45% 40% at 90% 85%,  rgba(10,90,170,.50)  0%, transparent 55%),
+    radial-gradient(ellipse 35% 35% at 55% 55%,  rgba(100,10,160,.30) 0%, transparent 50%);
+  background-size: 80px 80px, 80px 80px, 100% 100%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+  color: var(--text);
+  min-height:100vh;
+  display:flex; justify-content:center;
+  padding:36px 20px 90px;
+}
+
+[data-theme="light"] body, html[data-theme="light"] body {
+  background-color: #c8d8ee;
+  background-image:
+    linear-gradient(rgba(50,70,140,.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(50,70,140,.11) 1px, transparent 1px),
+    radial-gradient(ellipse 55% 45% at 10% 10%,  rgba(160,180,240,.60) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 40% at 90% 85%,  rgba(140,170,230,.55) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 35% at 55% 55%,  rgba(180,160,220,.35) 0%, transparent 50%);
+}
+
+body::before, body::after { content:none; }
+
+.app{width:100%;max-width:1020px;position:relative;}
+
+/* ── HEADER ── */
+header{margin-bottom:28px;}
+.hlabel{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--acc);text-transform:uppercase;margin-bottom:8px;opacity:.8;}
+h1{font-size:30px;font-weight:800;letter-spacing:-.03em;}
+h1 em{color:var(--acc);font-style:normal;}
+
+/* ═══════════════════════════
+   MIXIN GLASS — appliqué à tous
+   les éléments de façon cohérente
+   ═══════════════════════════ */
+
+/* Niveau 1 : surface principale (cards) */
+.glass-1 {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-lg)) saturate(220%);
+  -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(220%);
+  border: 1px solid var(--brd);
+  box-shadow: var(--shadow-glass);
+}
+/* Niveau 2 : éléments imbriqués */
+.glass-2 {
+  background: var(--glass-bg-deep);
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+  border: 1px solid var(--brd);
+}
+
+/* ── BOUTON THÈME ── */
+.theme-toggle {
+  position:fixed; top:18px; right:18px; z-index:300;
+  width:46px; height:46px; border-radius:50%;
+  background:var(--glass-bg);
+  backdrop-filter:blur(var(--blur-lg)) saturate(240%);
+  -webkit-backdrop-filter:blur(var(--blur-lg)) saturate(240%);
+  border:1px solid var(--brd);
+  box-shadow:var(--shadow-glass);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:18px;
+}
+.theme-toggle:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);transform:scale(1.08);}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.save-status{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;}
+.save-status b{color:var(--text-dim);}
+
+/* Pills — verre neutre */
+.save-btn,.pdf-btn {
+  border-radius:24px; padding:8px 20px;
+  font-family:'DM Mono',monospace; font-size:11px; cursor:pointer;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur)) saturate(220%);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(220%);
+  border: 1px solid var(--brd);
+  box-shadow: var(--shadow-glass);
+  color: var(--text-dim);
+  position: relative; overflow: hidden;
+}
+/* Reflet spéculaire sur les pills */
+.save-btn::before,.pdf-btn::before {
+  content:''; position:absolute; top:0; left:10%; right:10%; height:1px;
+  background: linear-gradient(90deg,transparent,rgba(160,180,255,.18) 40%,rgba(200,160,255,.14) 60%,transparent);
+  pointer-events:none;
+}
+.save-btn:hover,.pdf-btn:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);}
+.save-btn{color:var(--acc);}
+.save-btn.ok{color:var(--green);}
+.pdf-btn{color:var(--orange);}
+.clr-btn{background:none;border:none;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;text-decoration:underline;padding:8px 10px;}
+.clr-btn:hover{color:var(--red);}
+
+/* ── TABS — pill bar glass ── */
+.tabs {
+  display:flex; gap:3px; margin-bottom:22px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-lg)) saturate(260%) brightness(1.04) hue-rotate(3deg);
+  -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(260%) brightness(1.04) hue-rotate(3deg);
+  border: 1px solid var(--brd);
+  border-radius:18px; padding:4px;
+  box-shadow: var(--shadow-glass), 0 0 0 0.5px rgba(255,255,255,.08) inset;
+  position: relative;
+}
+.tabs::before {
+  content:''; position:absolute; top:0; left:5%; right:5%; height:1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(120,180,255,.16) 25%,
+    rgba(200,150,255,.14) 50%,
+    rgba(120,220,180,.14) 75%,
+    transparent
+  );
+  border-radius:18px; pointer-events:none;
+}
+.tab-btn{
+  flex:1; background:none; border:none; border-radius:14px; padding:10px 14px;
+  font-family:'Syne',sans-serif; font-size:12px; font-weight:700;
+  color:var(--muted); cursor:pointer; transition:all .3s;
+}
+.tab-btn.active{
+  background: var(--glass-bg-act);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--brd-hi);
+  color: var(--text);
+  box-shadow: var(--shadow-glass);
+  position: relative;
+}
+.tab-btn.active::before{
+  content:''; position:absolute; top:0; left:15%; right:15%; height:1px;
+  background: linear-gradient(90deg,transparent,rgba(140,180,255,.16) 50%,transparent);
+  pointer-events:none;
+}
+.tab-btn:hover:not(.active){color:var(--text-dim);background:var(--glass-bg-deep);}
+.tab-panel{display:none;} .tab-panel.active{display:block;}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.col{display:flex;flex-direction:column;gap:16px;}
+
+/* ═══════════════════════════
+   CARD — pièce de verre Apple
+   Signature : rim blanc en haut,
+   bord latéral lumineux, quasiment
+   transparent sur le fond
+   ═══════════════════════════ */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-lg)) saturate(280%) brightness(1.04) hue-rotate(4deg);
+  -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(280%) brightness(1.04) hue-rotate(4deg);
+  border: 1px solid var(--brd);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: var(--shadow-glass),
+    0 0 0 0.5px rgba(160,180,255,.12) inset,
+    0 0 20px rgba(140,120,255,.04);
+  position: relative;
+  transition: box-shadow .35s, border-color .35s, background .35s;
+}
+.card:hover {
+  background: var(--glass-bg-h);
+  border-color: var(--brd-hi);
+  box-shadow: var(--shadow-float);
+}
+/* Réfraction — bord haut iridescent (dispersion chromatique) */
+.card::before {
+  content:''; position:absolute; top:0; left:8%; right:8%; height:1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(120,180,255,.18) 20%,
+    rgba(180,140,255,.22) 40%,
+    rgba(255,255,255,.14) 50%,
+    rgba(140,220,180,.20) 60%,
+    rgba(100,160,255,.16) 80%,
+    transparent 100%
+  );
+  pointer-events:none; border-radius:22px 22px 0 0; z-index:1;
+}
+/* Réfraction — bord gauche */
+.card::after {
+  content:''; position:absolute; top:8%; bottom:8%; left:0; width:1px;
+  background: linear-gradient(180deg,
+    transparent,
+    rgba(140,160,255,.12) 30%,
+    rgba(180,140,255,.10) 55%,
+    rgba(120,200,180,.10) 70%,
+    transparent
+  );
+  pointer-events:none; z-index:1;
+}
+.ctitle{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+
+/* ── RÉGIME ── */
+.regime-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.regime-btn{
+  background:var(--glass-bg-deep);
+  backdrop-filter:blur(var(--blur-sm));-webkit-backdrop-filter:blur(var(--blur-sm));
+  border:1px solid var(--brd); border-radius:16px; padding:12px 10px;
+  cursor:pointer; text-align:center; transition:all .25s; position:relative; overflow:hidden;
+}
+.regime-btn::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(150,180,255,.14) 40%,rgba(200,160,255,.12) 60%,transparent);pointer-events:none;}
+.regime-btn.active{background:var(--glass-bg-act);border-color:var(--brd-hi);box-shadow:var(--shadow-glass);}
+.regime-btn:hover:not(.active){background:var(--glass-bg-h);border-color:var(--brd-hi);}
+.regime-btn .rn{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text);}
+.regime-btn .rd{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
+.regime-btn.active .rd{color:var(--acc);}
+
+.custom-rates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.rate-item{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:14px;padding:10px 12px;}
+.rate-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.rate-inp-wrap{display:flex;align-items:center;gap:4px;}
+.rate-inp{background:none;border:none;outline:none;font-family:'DM Mono',monospace;font-size:18px;color:var(--text);width:70px;-moz-appearance:textfield;}
+.rate-inp::-webkit-outer-spin-button,.rate-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.rate-sym{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);}
+.rate-note{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+.regime-badge{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:14px;font-family:'DM Mono',monospace;font-size:11px;}
+.badge-item{color:var(--muted);}
+.badge-item span{color:var(--text-dim);}
+.badge-item b{color:var(--acc);}
+.badge-sep{opacity:.3;}
+
+/* ── INPUTS ── */
+.inp-wrap{position:relative;}
+.inp-sym{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px;font-weight:700;color:var(--acc);pointer-events:none;z-index:2;}
+.ca-inp{
+  width:100%;
+  background:var(--glass-bg-deep);
+  backdrop-filter:blur(var(--blur-sm));-webkit-backdrop-filter:blur(var(--blur-sm));
+  border:1px solid var(--brd);border-radius:16px;
+  padding:18px 16px 18px 46px;
+  font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--text);
+  outline:none;-moz-appearance:textfield;
+  box-shadow:0 2px 8px rgba(0,0,0,.2) inset;
+}
+.ca-inp::-webkit-outer-spin-button,.ca-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.ca-inp:focus{border-color:var(--brd-hi);box-shadow:0 0 0 2px rgba(255,255,255,.08),0 2px 8px rgba(0,0,0,.2) inset;}
+.ca-inp::placeholder{color:var(--muted);}
+
+/* ── TOGGLE ── */
+.tog{display:flex;margin-top:10px;background:var(--glass-bg-deep);backdrop-filter:blur(var(--blur-sm));-webkit-backdrop-filter:blur(var(--blur-sm));border:1px solid var(--brd);border-radius:12px;padding:3px;gap:3px;position:relative;}
+.tog::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(150,180,255,.14) 40%,rgba(200,160,255,.12) 60%,transparent);pointer-events:none;}
+.tog-btn{flex:1;background:none;border:none;border-radius:9px;padding:7px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;transition:all .25s;}
+.tog-btn.active{background:var(--glass-bg-act);border:1px solid var(--brd-hi);color:var(--text);box-shadow:var(--shadow-sm);}
+
+/* ── RÉSULTATS ── */
+.rrow{display:flex;flex-direction:column;gap:2px;margin-bottom:12px;}
+.rlbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.rval{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--text);}
+.rval.or{color:var(--orange);}
+.rval.bl{color:var(--blue);}
+.rval.re{color:var(--red);font-size:30px;}
+.rval.gr{color:var(--green);font-size:30px;}
+.rpct{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);}
+.div{height:1px;background:var(--brd);margin:10px 0;}
+
+/* ── BARRE ── */
+.bar-wrap{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:10px;height:12px;overflow:hidden;display:flex;gap:2px;margin-top:14px;box-shadow:0 1px 4px rgba(0,0,0,.2) inset;}
+.bar-seg{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.b-or{background:var(--orange);}
+.b-bl{background:var(--blue);}
+.b-gr{background:var(--green);}
+
+/* ── PROVISION ── */
+.prov-box{background:rgba(255,96,96,.06);backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));border:1px solid rgba(255,96,96,.22);border-radius:18px;padding:20px;text-align:center;box-shadow:var(--shadow-sm);position:relative;}
+.prov-box::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(150,180,255,.14) 40%,rgba(200,160,255,.12) 60%,transparent);pointer-events:none;}
+.prov-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:7px;}
+.prov-amt{font-family:'DM Mono',monospace;font-size:42px;font-weight:500;color:var(--red);line-height:1;}
+.prov-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px;}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.mc{background:var(--glass-bg-deep);border-radius:12px;padding:10px;border:1px solid var(--brd);}
+.ml{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);margin-bottom:4px;}
+.mv{font-family:'DM Mono',monospace;font-size:15px;}
+
+/* ── IR VISUEL ── */
+.tmi-hero{display:flex;gap:14px;align-items:stretch;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:16px;padding:16px;margin-bottom:14px;}
+.tmi-left{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 88px;border-right:1px solid var(--brd);padding-right:14px;}
+.tmi-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;text-align:center;}
+.tmi-val{font-family:'DM Mono',monospace;font-size:36px;font-weight:500;line-height:1;color:var(--text);}
+.tmi-val.c0{color:var(--green);}.tmi-val.c11{color:#80e840;}.tmi-val.c30{color:var(--orange);}.tmi-val.c41{color:#ffaa30;}.tmi-val.c45{color:var(--red);}
+.tmi-right{flex:1;display:flex;flex-direction:column;justify-content:center;gap:7px;}
+.tmi-row{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:12px;}
+.tmi-row span:first-child{color:var(--muted);}
+.ir-resume{background:rgba(80,208,255,.05);border:1px solid rgba(80,208,255,.16);border-radius:14px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;line-height:2;color:var(--muted);margin-bottom:14px;}
+.ir-resume span{color:var(--text-dim);}.ir-resume b{color:var(--blue);}
+.trv-row{margin-bottom:7px;}
+.trv-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-family:'DM Mono',monospace;font-size:10px;}
+.trv-name{display:flex;align-items:center;gap:6px;}
+.trv-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.trv-lbl{color:var(--muted);}.trv-lbl.on{color:var(--text-dim);}
+.trv-amt{color:var(--muted);}.trv-amt.on{color:var(--blue);font-weight:500;}
+.trv-track{background:var(--glass-bg-deep);border-radius:4px;height:6px;overflow:hidden;}
+.trv-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.ir-steps{display:flex;flex-direction:column;gap:5px;margin-top:10px;}
+.ir-step{display:flex;justify-content:space-between;padding:7px 10px;border-radius:10px;font-family:'DM Mono',monospace;font-size:11px;background:var(--glass-bg-deep);border:1px solid var(--brd);}
+.ir-step.tot{background:rgba(80,208,255,.06);border-color:rgba(80,208,255,.18);}
+.ir-step span:first-child{color:var(--muted);}
+.ir-step span:last-child{color:var(--text-dim);font-weight:500;}
+.ir-step.tot span{color:var(--blue) !important;}
+details summary{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:6px;}
+.darr{transition:transform .2s;display:inline-block;}
+details[open] .darr{transform:rotate(90deg);}
+.an-row{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:12px;padding:4px 0;}
+.an-row span:first-child{color:var(--muted);}
+
+/* ── COMPARATEUR ── */
+.frais-section{display:flex;flex-direction:column;gap:5px;}
+.frais-cat{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--acc);margin-top:12px;margin-bottom:2px;opacity:.75;}
+.frais-cat:first-child{margin-top:0;}
+.frais-row{display:flex;align-items:center;justify-content:space-between;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:10px;padding:8px 12px;gap:10px;}
+.frais-row-l{display:flex;flex-direction:column;flex:1;}
+.frais-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--text-dim);}
+.frais-hint{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px;}
+.fi-wrap{display:flex;align-items:center;gap:4px;flex:0 0 110px;}
+.fi-cur{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);}
+.frais-inp{width:75px;background:none;border:none;outline:none;font-family:'DM Mono',monospace;font-size:14px;color:var(--text);text-align:right;-moz-appearance:textfield;}
+.frais-inp::-webkit-outer-spin-button,.frais-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.frais-inp::placeholder{color:var(--muted);}
+.fi-per{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+.frais-total{display:flex;justify-content:space-between;align-items:center;background:rgba(80,208,255,.05);border:1px solid rgba(80,208,255,.16);border-radius:14px;padding:11px 14px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:12px;}
+.frais-total span:last-child{font-size:18px;color:var(--blue);font-weight:500;}
+
+/* Verdict — même glass que les cards */
+.verdict-panel{border-radius:20px;padding:22px;border:1px solid var(--brd);background:var(--glass-bg);backdrop-filter:blur(var(--blur-lg)) saturate(220%);-webkit-backdrop-filter:blur(var(--blur-lg)) saturate(220%);box-shadow:var(--shadow-glass);position:relative;}
+.verdict-panel::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--rim) 30%,var(--rim) 70%,transparent);pointer-events:none;}
+.verdict-panel.win-bnc{border-color:rgba(160,128,255,.3);}
+.verdict-panel.win-reel{border-color:rgba(80,208,255,.3);}
+.verdict-panel.win-equal{border-color:rgba(80,240,160,.25);}
+.v-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.v-icon{font-size:32px;line-height:1;flex-shrink:0;margin-top:2px;}
+.v-title{font-size:19px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px;}
+.v-eco{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+.v-body{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:2;margin-bottom:14px;}
+.v-body span{color:var(--text-dim);}
+.seuil-wrap{background:var(--glass-bg-deep);border-radius:14px;padding:12px;border:1px solid var(--brd);}
+.seuil-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.seuil-labels{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:4px;}
+.seuil-track{position:relative;background:var(--glass-bg-deep);border-radius:8px;height:16px;overflow:visible;border:1px solid var(--brd);}
+.seuil-fill{height:100%;border-radius:8px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.seuil-marker{position:absolute;top:-5px;bottom:-5px;width:3px;border-radius:2px;background:var(--green);transition:left .6s;box-shadow:0 0 10px var(--green-glow);}
+.seuil-marker::after{content:attr(data-label);position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:9px;color:var(--green);white-space:nowrap;}
+.seuil-note{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:8px;line-height:1.7;}
+.seuil-note span{color:var(--text-dim);}
+
+.cmp-table{width:100%;border-collapse:collapse;}
+.cmp-table td{padding:9px 12px;font-family:'DM Mono',monospace;font-size:12px;border-bottom:1px solid var(--brd);}
+.cmp-table td:first-child{color:var(--muted);font-size:11px;width:185px;}
+.cmp-table td:not(:first-child){text-align:center;font-size:13px;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr.hl td{background:rgba(255,255,255,.02);}
+.cmp-table tr.fin td{background:var(--glass-bg-deep);}
+.cmp-table tr.fin td:not(:first-child){font-size:15px;font-weight:500;}
+.cmp-th{text-align:center;font-weight:700;font-size:12px;padding:10px 12px;border-bottom:2px solid var(--brd);}
+.note{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7;background:var(--glass-bg-deep);border-radius:12px;padding:10px 12px;border:1px solid var(--brd);margin-top:10px;}
+.note span{color:var(--text-dim);}
+.disclaimer{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center;margin-top:28px;line-height:1.6;opacity:.35;}
+
+/* ── FRAIS DYNAMIQUES ── */
+.frais-dynamic-row{display:flex;align-items:center;gap:8px;padding:4px 0;margin-bottom:4px;}
+.frais-cat-sel{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:10px;padding:5px 8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;outline:none;}
+.frais-label-inp{flex:1;background:none;border:none;outline:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text-dim);min-width:80px;}
+.frais-label-inp::placeholder{color:var(--muted);font-weight:400;}
+.frais-amount-wrap{display:flex;align-items:center;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:11px;padding:5px 6px 5px 10px;gap:6px;flex:0 0 auto;}
+.frais-amount-wrap:focus-within{border-color:var(--brd-hi);}
+.frais-amount-inp{width:58px;background:none;border:none;outline:none;font-family:'DM Mono',monospace;font-size:14px;color:var(--text);text-align:right;-moz-appearance:textfield;}
+.frais-amount-inp::-webkit-outer-spin-button,.frais-amount-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.frais-amount-inp::placeholder{color:var(--muted);}
+.frais-period-tog{display:flex;background:var(--glass-bg-deep);border-radius:7px;padding:2px;gap:1px;flex-shrink:0;}
+.frais-period-tog button{background:none;border:none;border-radius:5px;padding:2px 7px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;line-height:1.4;}
+.frais-period-tog button.active{background:var(--glass-bg-act);color:var(--text);border:1px solid var(--brd-hi);}
+.frais-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:5px;flex-shrink:0;line-height:1;}
+.frais-del-btn:hover{color:var(--red);}
+.add-frais-btn{width:100%;margin-top:8px;background:var(--glass-bg-deep);border:1px dashed var(--brd);border-radius:14px;padding:10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--acc);cursor:pointer;}
+.add-frais-btn:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);}
+.frais-empty{text-align:center;padding:20px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+
+/* ── GRAPHIQUES ── */
+.graph-controls{display:flex;flex-wrap:wrap;gap:20px;}
+.gc-block{display:flex;flex-direction:column;gap:8px;}
+.gc-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.gc-range-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.gc-sep{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);}
+.gc-inp-wrap{display:flex;align-items:center;gap:6px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:6px 10px;}
+.gc-sym{font-family:'DM Mono',monospace;font-size:13px;color:var(--acc);}
+.gc-inp-wrap input{background:none;border:none;outline:none;font-family:'DM Mono',monospace;font-size:15px;color:var(--text);width:70px;-moz-appearance:textfield;}
+.gc-inp-wrap input::-webkit-outer-spin-button,.gc-inp-wrap input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.gc-unit{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap;}
+.gc-series-row{display:flex;flex-wrap:wrap;gap:6px;}
+.serie-btn{display:flex;align-items:center;gap:6px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:22px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;}
+.serie-btn.active{background:var(--glass-bg-act);border-color:var(--brd-hi);color:var(--text);}
+.serie-btn:hover:not(.active){background:var(--glass-bg-h);color:var(--text-dim);}
+.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ref-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:12px;}
+.ref-table th{padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--brd);}
+.ref-table th:first-child{text-align:left;}
+.ref-table td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--brd);color:var(--text-dim);}
+.ref-table td:first-child{text-align:left;color:var(--muted);}
+.ref-table tr:last-child td{border-bottom:none;}
+.ref-table tr:hover td{background:var(--glass-bg-deep);}
+.ref-table td.col-charges{color:var(--orange);}.ref-table td.col-ir{color:var(--blue);}.ref-table td.col-total{color:var(--red);}.ref-table td.col-net{color:var(--green);}.ref-table td.col-taux{color:var(--acc);}
+
+/* ── HISTORIQUE ── */
+.hist-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hist-field{display:flex;flex-direction:column;gap:5px;}
+.hf-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.hf-inp{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:9px 12px;font-family:'DM Mono',monospace;font-size:13px;color:var(--text);outline:none;width:100%;}
+.hf-inp:focus{border-color:var(--brd-hi);}
+.hf-num{text-align:right;-moz-appearance:textfield;}
+.hf-num::-webkit-outer-spin-button,.hf-num::-webkit-inner-spin-button{-webkit-appearance:none;}
+.hf-inp::placeholder{color:var(--muted);}
+.hf-inp[type="month"]{color-scheme:dark;}
+
+/* Boutons historique — cohérents avec les pills topbar */
+.hist-add-btn,.hist-auto-btn {
+  border-radius:22px; padding:9px 20px;
+  font-family:'DM Mono',monospace; font-size:11px; cursor:pointer;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur)) saturate(220%);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(220%);
+  border: 1px solid var(--brd);
+  box-shadow: var(--shadow-sm);
+  position: relative; overflow: hidden;
+}
+.hist-add-btn::before,.hist-auto-btn::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(150,180,255,.14) 40%,rgba(200,160,255,.12) 60%,transparent);pointer-events:none;}
+.hist-add-btn{color:var(--acc);}
+.hist-add-btn:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);}
+.hist-auto-btn{color:var(--orange);}
+.hist-auto-btn:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);}
+
+/* Entrée historique — même glass que card */
+.hist-entry{background:var(--glass-bg);backdrop-filter:blur(var(--blur)) saturate(220%);-webkit-backdrop-filter:blur(var(--blur)) saturate(220%);border:1px solid var(--brd);border-radius:18px;padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);position:relative;}
+.hist-entry::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(150,180,255,.14) 40%,rgba(200,160,255,.12) 60%,transparent);pointer-events:none;}
+.hist-entry:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);}
+.hist-entry-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.hist-entry-date{font-family:'DM Mono',monospace;font-size:12px;color:var(--acc);font-weight:500;flex:0 0 auto;}
+.hist-entry-label{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.hist-entry-note{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);font-style:italic;}
+.hist-entry-vals{display:flex;gap:8px;flex-wrap:wrap;}
+.hist-val{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:5px 10px;font-family:'DM Mono',monospace;font-size:11px;display:flex;flex-direction:column;gap:1px;min-width:76px;}
+.hist-val-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.hist-val-v{font-size:13px;font-weight:500;}
+.hist-entry-actions{display:flex;gap:6px;margin-left:auto;align-items:center;}
+
+/* Petits boutons action — glass cohérent */
+.hist-action-btn,.hist-sort-btn,.hist-dir-btn {
+  background:var(--glass-bg-deep);
+  border:1px solid var(--brd);
+  border-radius:22px; padding:5px 12px;
+  font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+  cursor:pointer; white-space:nowrap;
+  backdrop-filter:blur(var(--blur-sm));
+  -webkit-backdrop-filter:blur(var(--blur-sm));
+}
+.hist-action-btn:hover,.hist-sort-btn:hover,.hist-dir-btn:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);color:var(--text-dim);}
+.hist-sort-btn.active{background:var(--glass-bg-act);border-color:var(--brd-hi);color:var(--text);}
+.hist-dir-btn.asc{color:var(--blue);}
+
+/* Filtre année */
+.hist-year-pill {
+  background:var(--glass-bg-deep); border:1px solid var(--brd);
+  border-radius:22px; padding:4px 14px;
+  font-family:'DM Mono',monospace; font-size:11px; font-weight:600;
+  color:var(--muted); cursor:pointer; transition:all .2s;
+}
+.hist-year-pill:hover { border-color:var(--brd-hi); color:var(--text-dim); }
+.hist-year-pill.active {
+  background:var(--glass-bg-act); border-color:var(--acc);
+  color:var(--acc);
+}
+
+/* Bouton import CSV */
+.hist-csv-btn{background:rgba(80,208,255,.08);border:1px solid rgba(80,208,255,.25);border-radius:22px;padding:9px 18px;font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);cursor:pointer;transition:all .2s;}
+.hist-csv-btn:hover{background:rgba(80,208,255,.18);}
+
+/* Boutons export format */
+.export-fmt-btn{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);cursor:pointer;transition:all .2s;text-align:left;width:100%;}
+.export-fmt-btn:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);color:var(--text);}
+
+/* CSV preview table */
+.csv-preview-table{width:100%;border-collapse:collapse;font-size:10px;}
+.csv-preview-table th{background:var(--glass-bg-deep);padding:5px 8px;text-align:left;color:var(--muted);border-bottom:1px solid var(--brd);}
+.csv-preview-table td{padding:5px 8px;border-bottom:1px solid var(--glass-bg-deep);color:var(--text-dim);}
+
+/* Seuil TVA item */
+.tva-item{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.tva-item.warn{border-color:rgba(255,170,64,.35);background:rgba(255,170,64,.06);}
+.tva-item.danger{border-color:rgba(255,96,96,.4);background:rgba(255,96,96,.08);}
+.tva-bar-wrap{flex:1;background:var(--glass-bg-deep);border-radius:4px;height:5px;overflow:hidden;}
+.tva-bar{height:100%;border-radius:4px;transition:width .5s;}
+
+/* Retraite résultat */
+.ret-kpi{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;}
+
+/* Société tableau */
+.soc-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:11px;}
+.soc-table td{padding:6px 10px;border-bottom:1px solid var(--brd);}
+.soc-table td:last-child{text-align:right;font-weight:500;}
+.soc-table tr:last-child td{border-bottom:none;font-weight:700;background:var(--glass-bg-deep);}
+
+/* Toast */
+#global-toast{pointer-events:none;}
+
+/* ── IMPORT BANCAIRE ── */
+.bank-drop {
+  border:2px dashed var(--brd); border-radius:16px;
+  padding:32px 20px; text-align:center; cursor:pointer;
+  transition:all .2s; background:var(--glass-bg-deep);
+}
+.bank-drop:hover, .bank-drop.drag-over {
+  border-color:var(--acc); background:rgba(157,141,247,.06);
+}
+.bank-drop.drag-over { border-style:solid; }
+
+/* Mapping colonnes */
+.bank-col-row {
+  display:flex; align-items:center; gap:10px;
+  background:var(--glass-bg-deep); border:1px solid var(--brd);
+  border-radius:12px; padding:10px 14px; flex-wrap:wrap;
+}
+.bank-col-lbl { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); flex:0 0 120px; }
+.bank-col-sel {
+  flex:1; background:var(--glass-bg); border:1px solid var(--brd);
+  border-radius:8px; padding:6px 10px; font-family:'DM Mono',monospace;
+  font-size:11px; color:var(--text-dim); cursor:pointer; outline:none;
+  min-width:140px;
+}
+.bank-col-sel:focus { border-color:var(--acc); }
+
+/* Aperçu mensuel */
+.bank-month-row {
+  background:var(--glass-bg-deep); border:1px solid var(--brd);
+  border-radius:12px; padding:12px 14px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.bank-month-row.selected { border-color:var(--acc); background:rgba(157,141,247,.07); }
+.bank-month-row.skip     { opacity:.45; }
+.bank-month-check { width:18px; height:18px; accent-color:var(--acc); cursor:pointer; flex-shrink:0; }
+.bank-month-date  { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; color:var(--acc); flex:0 0 80px; }
+.bank-month-stats { flex:1; display:flex; gap:12px; flex-wrap:wrap; font-family:'DM Mono',monospace; font-size:11px; }
+.bank-month-lbl   { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); display:block; }
+.bank-month-val   { font-size:13px; font-weight:500; display:block; }
+.bank-month-tx    { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+.bank-month-exists{ font-family:'DM Mono',monospace; font-size:9px; color:var(--orange); background:rgba(255,170,64,.1); border-radius:8px; padding:2px 8px; }
+
+/* Bouton CSV historique */
+.hist-annual-btn{background:rgba(80,240,160,.08);border:1px solid rgba(80,240,160,.25);border-radius:22px;padding:3px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.hist-annual-btn:hover{background:rgba(80,240,160,.18);border-color:rgba(80,240,160,.45);}
+
+/* ── TOGGLE TVA ── */
+.tva-switch {
+  width:44px; height:24px; border-radius:12px;
+  background:var(--glass-bg-deep); border:1px solid var(--brd);
+  position:relative; cursor:pointer; transition:all .3s;
+  flex-shrink:0;
+}
+.tva-switch.on {
+  background:rgba(80,208,255,.2); border-color:rgba(80,208,255,.5);
+}
+.tva-switch-thumb {
+  position:absolute; top:2px; left:2px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--muted); transition:all .3s;
+}
+.tva-switch.on .tva-switch-thumb {
+  transform:translateX(20px); background:var(--blue);
+}
+.tva-rate-btn {
+  background:var(--glass-bg-deep); border:1px solid var(--brd);
+  border-radius:20px; padding:5px 12px;
+  font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+  cursor:pointer; transition:all .2s; white-space:nowrap;
+}
+.tva-rate-btn.active {
+  background:rgba(80,208,255,.12); border-color:rgba(80,208,255,.4); color:var(--blue);
+}
+.tva-mode-btn {
+  background:var(--glass-bg-deep); border:1px solid var(--brd);
+  border-radius:20px; padding:5px 12px;
+  font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+  cursor:pointer; transition:all .2s; white-space:nowrap;
+}
+.tva-mode-btn.active {
+  background:rgba(80,240,160,.10); border-color:rgba(80,240,160,.35); color:var(--green);
+}
+
+/* Séparateur d'année */
+.hist-year-sep{display:flex;align-items:center;gap:12px;margin:20px 0 10px;}
+.hist-year-sep:first-child{margin-top:4px;}
+.hist-year-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text-dim);letter-spacing:-.01em;flex-shrink:0;}
+.hist-year-line{flex:1;height:1px;background:linear-gradient(90deg,var(--brd),transparent);}
+.hist-year-summary{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;display:flex;gap:12px;}
+.hist-year-summary b{color:var(--text-dim);}
+
+/* Bouton bilan annuel */
+.hist-annual-btn{background:rgba(80,240,160,.08);border:1px solid rgba(80,240,160,.25);border-radius:22px;padding:3px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);cursor:pointer;white-space:nowrap;transition:all .2s;}
+.hist-annual-btn:hover{background:rgba(80,240,160,.18);border-color:rgba(80,240,160,.45);}
+
+/* Sélecteur d'année dans le modal */
+.annual-year-option{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--glass-bg-deep);border:2px solid var(--brd);border-radius:14px;padding:12px 16px;cursor:pointer;transition:all .2s;}
+.annual-year-option:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);}
+.annual-year-option.selected{background:var(--glass-bg-act);border-color:var(--green);}
+.ayo-year{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);}
+.ayo-stats{display:flex;gap:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+.ayo-stats span{color:var(--text-dim);}
+
+/* Impression bilan annuel */
+@media print {
+  #annual-print-zone{display:block !important;font-family:'Syne',sans-serif;color:#111;}
+  #annual-print-zone .apz-title{font-size:26px;font-weight:800;margin-bottom:4px;}
+  #annual-print-zone .apz-sub{font-family:'DM Mono',monospace;font-size:11px;color:#555;margin-bottom:20px;}
+  #annual-print-zone .apz-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+  #annual-print-zone .apz-kpi{background:#f5f5fa;border-radius:10px;padding:14px;border:1px solid #ddd;}
+  #annual-print-zone .apz-kpi-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#777;margin-bottom:4px;}
+  #annual-print-zone .apz-kpi-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:600;}
+  #annual-print-zone .apz-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:11px;margin-top:20px;}
+  #annual-print-zone .apz-table th{text-align:left;padding:7px 10px;border-bottom:2px solid #ccc;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#777;}
+  #annual-print-zone .apz-table td{padding:7px 10px;border-bottom:1px solid #e0e0e0;}
+  #annual-print-zone .apz-table tr.apz-total td{border-bottom:none;border-top:2px solid #aaa;font-weight:700;background:#f0f0f8;}
+  #annual-print-zone #chart-annual-print{display:block;}
+}
+.hist-del-btn:hover{color:var(--red) !important;}
+
+/* ── PDF MODAL — verre premium ── */
+.pdf-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(20px) saturate(220%);-webkit-backdrop-filter:blur(20px) saturate(220%);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.pdf-modal{
+  background:var(--glass-bg-h);
+  backdrop-filter:blur(var(--blur-lg)) saturate(240%);
+  -webkit-backdrop-filter:blur(var(--blur-lg)) saturate(240%);
+  border:1px solid var(--brd-hi);
+  border-radius:26px;padding:30px;max-width:460px;width:100%;
+  box-shadow:var(--shadow-float);
+  position:relative;overflow:hidden;
+}
+.pdf-modal::before{content:'';position:absolute;top:0;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,var(--rim) 30%,rgba(255,255,255,.7) 50%,var(--rim) 70%,transparent);border-radius:26px 26px 0 0;pointer-events:none;}
+.pdf-modal h3{font-size:20px;font-weight:800;margin-bottom:5px;}
+.pdf-modal-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:18px;}
+.pdf-options{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.pdf-option{display:flex;align-items:center;gap:10px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:14px;padding:10px 14px;cursor:pointer;}
+.pdf-option:hover{background:var(--glass-bg-h);border-color:var(--brd-hi);}
+.pdf-option input[type="checkbox"]{width:15px;height:15px;accent-color:var(--acc);cursor:pointer;flex-shrink:0;}
+.pdf-option label{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dim);cursor:pointer;}
+.pdf-modal-actions{display:flex;gap:8px;justify-content:flex-end;}
+.pdf-modal-cancel{background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:22px;padding:9px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);cursor:pointer;}
+.pdf-modal-cancel:hover{color:var(--red);border-color:rgba(255,96,96,.3);}
+.pdf-modal-confirm{background:var(--glass-bg-act);border:1px solid var(--brd-hi);border-radius:22px;padding:9px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);cursor:pointer;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+.pdf-modal-confirm::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(150,180,255,.14) 40%,rgba(200,160,255,.12) 60%,transparent);pointer-events:none;}
+.pdf-modal-confirm:hover{background:var(--glass-bg-h);}
+
+/* ── PRINT ── */
+#hist-print-zone{display:none;}
+@media print{
+  #hist-print-zone{display:block !important;font-family:'Syne',sans-serif;}
+  #hist-print-zone h2{font-size:22px;font-weight:800;margin-bottom:4px;}
+  #hist-print-zone .hpz-meta{font-family:'DM Mono',monospace;font-size:11px;color:#555;margin-bottom:20px;}
+  #hist-print-zone .hpz-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  #hist-print-zone .hpz-block{background:#f5f5fa;border-radius:8px;padding:14px;border:1px solid #ddd;}
+  #hist-print-zone .hpz-block-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#777;margin-bottom:4px;}
+  #hist-print-zone .hpz-block-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}
+  .app,.theme-toggle{display:none !important;}
+}
+@media print{
+  @page{size:A4;margin:15mm 12mm;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{background:#fff !important;color:#111 !important;padding:0 !important;}
+  .app{max-width:100% !important;}
+  .topbar,.tabs,.tog,.inp-sym,.frais-section,.frais-total,.note,.disclaimer{display:none !important;}
+  .tab-panel{display:block !important;}
+  .card{background:#f7f7fa !important;border-color:#ccc !important;backdrop-filter:none !important;box-shadow:none !important;}
+  .card::before,.card::after{display:none;}
+  h1 em{color:#5030c8 !important;}
+  .g2{grid-template-columns:1fr 1fr !important;}
+  .card{page-break-inside:avoid;}
+  #tab-compare{page-break-before:always;}
+  .print-sep{display:block !important;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#5030c8;margin:14px 0 10px;padding-bottom:5px;border-bottom:2px solid #5030c8;}
+}
+.print-sep{display:none;}
+@keyframes pop{from{opacity:.5;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.pop{animation:pop .2s ease-out;}
+/* ═══════════════════════════════
+   MOBILE — ≤ 680px
+   ═══════════════════════════════ */
+@media (max-width:680px) {
+
+  body { padding:16px 12px 80px; }
+
+  /* Header */
+  h1 { font-size:22px; }
+  .hlabel { font-size:9px; }
+
+  /* Bouton thème */
+  .theme-toggle { top:12px; right:12px; width:38px; height:38px; font-size:15px; }
+
+  /* Topbar */
+  .topbar { gap:6px; }
+  .save-btn, .pdf-btn { padding:6px 14px; font-size:10px; }
+  .save-status { display:none; }
+
+  /* Tabs — scroll horizontal */
+  .tabs {
+    border-radius:14px;
+    padding:3px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:2px;
+    flex-wrap:nowrap;
+  }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab-btn {
+    flex:0 0 auto;
+    padding:8px 12px;
+    font-size:11px;
+    white-space:nowrap;
+    border-radius:11px;
+  }
+
+  /* Grilles → 1 colonne */
+  .g2, .g3, .regime-grid { grid-template-columns:1fr; gap:10px; }
+
+  /* Cards */
+  .card { padding:16px; border-radius:16px; }
+
+  /* Inputs CA */
+  .ca-inp { font-size:20px; padding:14px 12px 14px 38px; }
+  .inp-sym { font-size:16px; left:12px; }
+
+  /* Provision */
+  .prov-amt { font-size:32px; }
+
+  /* TMI hero */
+  .tmi-hero { flex-direction:column; gap:10px; }
+  .tmi-left {
+    flex:0 0 auto; border-right:none;
+    border-bottom:1px solid var(--brd);
+    padding-right:0; padding-bottom:10px;
+    flex-direction:row; justify-content:flex-start; gap:14px;
+  }
+  .tmi-val { font-size:28px; }
+
+  /* Résultats */
+  .rval { font-size:20px; }
+  .rval.re, .rval.gr { font-size:24px; }
+
+  /* Barre de résumé mensuel */
+  .mg { grid-template-columns:1fr 1fr; gap:6px; }
+  .mv { font-size:13px; }
+
+  /* Toggle période */
+  .tog-btn { padding:6px 4px; font-size:10px; }
+
+  /* Régime — scroll horizontal sur mobile */
+  .regime-grid {
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+  }
+  .regime-btn { padding:9px 6px; border-radius:12px; }
+  .regime-btn .rn { font-size:11px; }
+  .regime-btn .rd { font-size:8px; }
+
+  /* Graphiques — hauteur réduite */
+  #chart-montants { max-height:220px; }
+  #chart-taux, #chart-pct { max-height:180px; }
+  #chart-history { max-height:180px; }
+
+  /* Graphique — légende 2 colonnes */
+  .gc-series-row { gap:5px; }
+  .serie-btn { padding:5px 10px; font-size:10px; }
+
+  /* Graphique — table scroll */
+  .ref-table { font-size:10px; }
+  .ref-table th, .ref-table td { padding:6px 8px; }
+
+  /* Comparateur — frais dynamiques */
+  .frais-dynamic-row { flex-wrap:wrap; gap:6px; }
+  .frais-label-inp { min-width:60px; font-size:12px; }
+  .frais-amount-wrap { flex:1 0 auto; }
+
+  /* Historique — entrée */
+  .hist-entry { padding:12px; border-radius:14px; }
+  .hist-entry-top { gap:6px; }
+  .hist-entry-label { font-size:12px; }
+  .hist-entry-vals {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+  }
+  .hist-val { min-width:0; }
+  .hist-val-v { font-size:12px; }
+
+  /* Historique — boutons action */
+  .hist-entry-actions { margin-left:0; width:100%; justify-content:flex-end; }
+
+  /* Historique — barre de tri scroll */
+  .hist-year-filter-bar {
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:4px;
+  }
+  .hist-year-filter-bar::-webkit-scrollbar { display:none; }
+  .hist-sort-bar {
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:4px;
+  }
+  .hist-sort-bar::-webkit-scrollbar { display:none; }
+  .hist-sort-btn, .hist-dir-btn, .hist-year-pill { white-space:nowrap; }
+
+  /* Historique — résumé année */
+  .hist-year-summary { display:none; }
+  .hist-year-sep { margin:16px 0 8px; }
+
+  /* Résumé sidebar → sous la form */
+  .col { gap:10px; }
+
+  /* PDF modal plein écran */
+  .pdf-modal-overlay { padding:10px; align-items:flex-end; }
+  .pdf-modal {
+    border-radius:20px 20px 16px 16px;
+    padding:22px 18px;
+    max-width:100%;
+  }
+  .pdf-modal h3 { font-size:16px; }
+
+  /* Disclaimer */
+  .disclaimer { font-size:9px; margin-top:20px; }
+
+  /* Tableau comparatif — scroll */
+  .cmp-table { font-size:11px; }
+  .cmp-table td, .cmp-th { padding:7px 8px; }
+}
+
+/* ═══════════════════════════════
+   TRÈS PETIT — ≤ 380px
+   ═══════════════════════════════ */
+@media (max-width:380px) {
+  body { padding:12px 8px 70px; }
+  h1 { font-size:19px; }
+  .ca-inp { font-size:18px; }
+  .regime-grid { grid-template-columns:1fr 1fr; }
+  .hist-entry-vals { grid-template-columns:1fr 1fr; }
+  .tab-btn { padding:7px 9px; font-size:10px; }
+}
+</style>
+
+
+</head>
+<body>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Changer le thème">🌙</button>
+
+<div class="app">
+
+<header>
+  <div class="hlabel">// outil fiscal</div>
+  <h1>Calculateur <em>Fiscal Freelance</em></h1>
+
+</header>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span id="save-status" class="save-status">💾 Non sauvegardé</span>
+  <button class="clr-btn" onclick="clearData()">Tout effacer</button>
+  <button class="pdf-btn" onclick="exportPDF()">🖨️ Exporter PDF</button>
+  <button class="save-btn" id="save-btn" onclick="saveData()">Sauvegarder</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('calcul',this)">📊 Calcul fiscal</button>
+  <button class="tab-btn" onclick="showTab('compare',this)">📋 Simulateur de charges</button>
+  <button class="tab-btn" onclick="showTab('graphs',this)">📈 Graphiques</button>
+  <button class="tab-btn" onclick="showTab('history',this)">📅 Historique</button>
+  <button class="tab-btn" onclick="showTab('outils',this)">🎯 Outils</button>
+</div>
+
+<!-- ===== ONGLET 1 ===== -->
+<div class="tab-panel active" id="tab-calcul">
+<div class="print-sep">📊 Calcul fiscal</div>
+
+<!-- SÉLECTEUR RÉGIME (pleine largeur) -->
+<div class="card" style="margin-bottom:14px;">
+  <div class="ctitle">Régime fiscal</div>
+  <div class="regime-grid">
+    <button class="regime-btn active" data-regime="bnc" onclick="setRegime(this)">
+      <div class="rn">Micro-BNC</div>
+      <div class="rd">Libéral / BNC · 25,6% · abat. 34%</div>
+    </button>
+    <button class="regime-btn" data-regime="bic-s" onclick="setRegime(this)">
+      <div class="rn">Micro-BIC Services</div>
+      <div class="rd">Artisan / conseil · 25,6% · abat. 50%</div>
+    </button>
+    <button class="regime-btn" data-regime="bic-v" onclick="setRegime(this)">
+      <div class="rn">Micro-BIC Vente</div>
+      <div class="rd">Commerce / vente · 12,3% · abat. 71%</div>
+    </button>
+    <button class="regime-btn" data-regime="ag" onclick="setRegime(this)">
+      <div class="rn">Auto-entrepreneur</div>
+      <div class="rd">Comme micro-BNC ou BIC selon activité</div>
+    </button>
+    <button class="regime-btn" data-regime="salarie" onclick="setRegime(this)">
+      <div class="rn">Salarié / Portage</div>
+      <div class="rd">Charges ~22% · Pas d'abattement</div>
+    </button>
+    <button class="regime-btn" data-regime="custom" onclick="setRegime(this)">
+      <div class="rn">Personnalisé</div>
+      <div class="rd">Saisissez vos propres taux</div>
+    </button>
+  </div>
+
+  <!-- Badge infos régime -->
+  <div class="regime-badge" id="regime-badge"></div>
+
+  <!-- Taux personnalisés (caché par défaut) -->
+  <div id="custom-wrap" style="display:none;margin-top:14px;">
+    <div class="custom-rates">
+      <div class="rate-item">
+        <div class="rate-lbl">Taux charges sociales</div>
+        <div class="rate-inp-wrap">
+          <input class="rate-inp" type="number" id="r-charges" value="25.6" min="0" max="100" step="0.1" oninput="applyCustomRates();markDirty();">
+          <span class="rate-sym">%</span>
+        </div>
+        <div class="rate-note">URSSAF, CIPAV, MSA…</div>
+      </div>
+      <div class="rate-item">
+        <div class="rate-lbl">Abattement forfaitaire</div>
+        <div class="rate-inp-wrap">
+          <input class="rate-inp" type="number" id="r-abat" value="34" min="0" max="100" step="0.1" oninput="applyCustomRates();markDirty();">
+          <span class="rate-sym">%</span>
+        </div>
+        <div class="rate-note">0% si pas d'abattement (ex: salarié)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="col">
+
+    <!-- CA -->
+    <div class="card">
+      <div class="ctitle">Chiffre d'affaires / Revenu brut</div>
+
+      <!-- Toggle TVA -->
+      <div id="tva-toggle-wrap" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:10px 14px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text-dim);">Assujetti à la TVA ?</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;" id="tva-toggle-hint">Votre CA est saisi HT ou TTC ?</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);" id="tva-status-lbl">Franchise TVA</span>
+          <div class="tva-switch" onclick="toggleTVA()" id="tva-switch">
+            <div class="tva-switch-thumb" id="tva-switch-thumb"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taux TVA (visible si assujetti) -->
+      <div id="tva-rate-wrap" style="display:none;margin-bottom:14px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Taux de TVA applicable</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;" id="tva-rate-btns">
+          <button class="tva-rate-btn active" data-tva="20" onclick="setTVARate(20,this)">20% — Standard</button>
+          <button class="tva-rate-btn" data-tva="10" onclick="setTVARate(10,this)">10% — Intermédiaire</button>
+          <button class="tva-rate-btn" data-tva="5.5" onclick="setTVARate(5.5,this)">5,5% — Réduit</button>
+          <button class="tva-rate-btn" data-tva="2.1" onclick="setTVARate(2.1,this)">2,1% — Super réduit</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;align-items:center;flex-wrap:wrap;">
+          <button class="tva-mode-btn active" data-mode="ht" onclick="setTVAMode('ht',this)">CA saisi HT → calcul TTC</button>
+          <button class="tva-mode-btn" data-mode="ttc" onclick="setTVAMode('ttc',this)">CA saisi TTC → calcul HT</button>
+        </div>
+        <div id="tva-detail-line" style="margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:var(--glass-bg-deep);border-radius:10px;padding:9px 12px;border:1px solid var(--brd);"></div>
+      </div>
+
+      <div class="inp-wrap">
+        <span class="inp-sym">€</span>
+        <input class="ca-inp" type="number" id="ca" placeholder="0" min="0" oninput="calc();markDirty();">
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;text-align:right;" id="ca-label-hint"></div>
+      <div class="tog">
+        <button class="tog-btn active" onclick="setPeriode(this,'m')">Mensuel</button>
+        <button class="tog-btn" onclick="setPeriode(this,'t')">Trimestriel</button>
+        <button class="tog-btn" onclick="setPeriode(this,'a')">Annuel</button>
+      </div>
+    </div>
+
+    <!-- IR VISUEL -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div class="ctitle" style="margin-bottom:0;">Impôt sur le revenu</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);" id="exo-ir-lbl">Imposable</span>
+          <div class="tva-switch" id="exo-ir-switch" onclick="toggleExoIR()">
+            <div class="tva-switch-thumb" id="exo-ir-thumb"></div>
+          </div>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Exonéré</span>
+        </div>
+      </div>
+
+      <!-- Panneau exonération -->
+      <div id="exo-ir-panel" style="display:none;margin-bottom:16px;">
+        <div style="background:rgba(80,240,160,.07);border:1px solid rgba(80,240,160,.25);border-radius:14px;padding:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px;">Paramètres d'exonération</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+            <div class="hist-field">
+              <div class="hf-label">Durée de l'exonération</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <input type="number" id="exo-duree" class="hf-inp hf-num" value="12" min="1" max="60" oninput="calcExoIR()" style="width:70px;">
+                <div class="tog" style="margin-top:0;flex:1;">
+                  <button class="tog-btn active" id="exo-unit-m" onclick="setExoUnit('m',this)">Mois</button>
+                  <button class="tog-btn" id="exo-unit-a" onclick="setExoUnit('a',this)">Années</button>
+                </div>
+              </div>
+            </div>
+            <div class="hist-field">
+              <div class="hf-label">Début de l'exonération</div>
+              <input type="month" id="exo-debut" class="hf-inp" oninput="calcExoIR()">
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+            <div class="hist-field">
+              <div class="hf-label">Type d'exonération</div>
+              <select id="exo-type" class="hf-inp" onchange="calcExoIR()" style="cursor:pointer;">
+                <option value="totale">Totale (IR = 0)</option>
+                <option value="partielle">Partielle (% réduit)</option>
+                <option value="degressive">Dégressive (ex: ACRE)</option>
+              </select>
+            </div>
+            <div class="hist-field" id="exo-pct-wrap" style="display:none;">
+              <div class="hf-label">Taux résiduel d'IR (%)</div>
+              <div class="rate-inp-wrap">
+                <input type="number" id="exo-pct" class="rate-inp" value="50" min="0" max="100" step="5" oninput="calcExoIR()">
+                <span class="rate-sym">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Résultat exo -->
+          <div id="exo-result" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.9;background:var(--glass-bg-deep);border-radius:10px;padding:10px 12px;border:1px solid var(--brd);"></div>
+        </div>
+      </div>
+
+      <div class="tmi-hero">
+        <div class="tmi-left">
+          <div class="tmi-lbl">Tranche marginale</div>
+          <div class="tmi-val" id="tmi-big">—</div>
+        </div>
+        <div class="tmi-right">
+          <div class="tmi-row"><span>Revenu imposable</span><span id="tmi-rni" style="color:var(--orange)">—</span></div>
+          <div class="tmi-row"><span>IR annuel</span><span id="tmi-ir-an" style="color:var(--blue)">—</span></div>
+          <div class="tmi-row"><span>IR mensuel</span><span id="tmi-ir-mo" style="color:var(--blue);font-weight:600">—</span></div>
+        </div>
+      </div>
+
+      <div class="ir-resume" id="ir-resume">
+        <div id="ir-r1" style="color:var(--muted)">Saisissez votre CA pour voir le calcul.</div>
+        <div id="ir-r2" style="display:none"></div>
+        <div id="ir-r3" style="display:none"></div>
+      </div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Barème progressif</div>
+      <div id="tr-visual"></div>
+
+      <details style="margin-top:12px;">
+        <summary><span class="darr">▶</span> Détail étape par étape</summary>
+        <div class="ir-steps" id="ir-steps"></div>
+      </details>
+    </div>
+
+  </div>
+
+  <div class="col">
+
+    <!-- DÉCOMPOSITION -->
+    <div class="card">
+      <div class="ctitle">Décomposition mensuelle</div>
+      <div class="rrow"><div class="rlbl">CA / Revenu mensuel</div><div class="rval" id="r-ca">0 €</div></div>
+      <div class="div"></div>
+      <div class="rrow">
+        <div class="rlbl" id="lbl-charges">Charges sociales</div>
+        <div class="rval or" id="r-charges-v">0 €</div>
+        <div class="rpct" id="r-charges-p">—</div>
+      </div>
+      <div class="rrow">
+        <div class="rlbl">Impôt sur le revenu</div>
+        <div class="rval bl" id="r-ir">0 €</div>
+        <div class="rpct" id="r-ir-p">—</div>
+      </div>
+      <div class="div"></div>
+      <div class="rrow">
+        <div class="rlbl">Total à provisionner</div>
+        <div class="rval re" id="r-total">0 €</div>
+        <div class="rpct" id="r-total-p">—</div>
+      </div>
+      <div class="rrow" style="margin-bottom:0">
+        <div class="rlbl">Net disponible</div>
+        <div class="rval gr" id="r-net">0 €</div>
+        <div class="rpct" id="r-net-p">—</div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-seg b-or" id="b-c" style="width:0%"></div>
+        <div class="bar-seg b-bl" id="b-i" style="width:0%"></div>
+        <div class="bar-seg b-gr" id="b-n" style="width:0%"></div>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:8px;">
+        <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--orange)" id="leg-charges">■ Charges</span>
+        <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--blue)">■ IR</span>
+        <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--green)">■ Net</span>
+      </div>
+    </div>
+
+    <!-- PROVISION -->
+    <div class="card" style="padding:18px;">
+      <div class="ctitle">⚡ À mettre de côté</div>
+      <div class="prov-box">
+        <div class="prov-lbl">Provision / mois</div>
+        <div class="prov-amt" id="prov-m">0 €</div>
+        <div class="prov-sub" id="prov-sub">Saisissez votre revenu pour commencer</div>
+      </div>
+      <div class="mg">
+        <div class="mc"><div class="ml" id="ml-charges">Charges/mois</div><div class="mv" style="color:var(--orange)" id="pm-c">0 €</div></div>
+        <div class="mc"><div class="ml">IR/mois</div><div class="mv" style="color:var(--blue)" id="pm-i">0 €</div></div>
+        <div class="mc"><div class="ml">Trimestriel</div><div class="mv" style="color:var(--red)" id="prov-t">0 €</div></div>
+        <div class="mc"><div class="ml">Annuel</div><div class="mv" style="color:var(--red)" id="prov-a">0 €</div></div>
+      </div>
+    </div>
+
+    <!-- ANNUEL -->
+    <div class="card">
+      <div class="ctitle">Projection annuelle</div>
+      <div class="an-row"><span>CA / Revenu annuel</span><span id="an-ca" style="color:var(--text)">—</span></div>
+      <div class="an-row" id="an-abat-row"><span id="an-abat-lbl">Abattement</span><span id="an-abat" style="color:var(--muted)">—</span></div>
+      <div class="an-row"><span>Revenu imposable</span><span id="an-rni" style="color:var(--orange)">—</span></div>
+      <div class="an-row"><span id="an-charges-lbl">Charges sociales</span><span id="an-charges" style="color:var(--orange)">—</span></div>
+      <div class="an-row"><span>IR annuel</span><span id="an-ir" style="color:var(--blue)">—</span></div>
+      <div class="div"></div>
+      <div class="an-row" style="font-size:14px;"><span>Net annuel</span><span id="an-net" style="color:var(--green);font-size:16px;">—</span></div>
+    </div>
+
+  </div>
+</div>
+
+  <!-- ALERTE TVA -->
+  <div id="tva-alert" style="display:none;margin-top:14px;">
+    <div class="card" id="tva-alert-card" style="border-color:rgba(255,170,64,.3);">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:22px;">⚠️</span>
+        <div style="flex:1;">
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--orange);margin-bottom:3px;" id="tva-alert-title">Seuil TVA</div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7;" id="tva-alert-body"></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;">
+          <div id="tva-progress-lbl"></div>
+          <div style="background:var(--glass-bg-deep);border-radius:6px;height:6px;width:140px;margin-top:5px;overflow:hidden;">
+            <div id="tva-progress-bar" style="height:100%;border-radius:6px;background:var(--orange);transition:width .5s;width:0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-calcul -->
+
+<!-- ===== ONGLET 2 ===== -->
+<div class="tab-panel" id="tab-compare">
+<div class="print-sep">📋 Simulateur de charges</div>
+
+  <div class="card" style="margin-bottom:14px;background:rgba(139,124,248,.06);border-color:rgba(139,124,248,.3);">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div class="ctitle" style="margin-bottom:4px;">Revenu utilisé pour la comparaison</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Modifiez le CA dans l'onglet <b style="color:var(--acc)">📊 Calcul fiscal</b></div>
+      </div>
+      <div id="cmp-ca-display" style="font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--acc);">— €/mois</div>
+    </div>
+    <div id="cmp-regime-note" style="margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);"></div>
+  </div>
+
+  <div class="g2" style="align-items:start;">
+
+    <!-- FRAIS DYNAMIQUES -->
+    <div class="card">
+      <div class="ctitle">Mes charges professionnelles (annuelles)</div>
+
+      <!-- Liste dynamique -->
+      <div id="frais-list"></div>
+
+      <!-- Bouton ajouter -->
+      <button class="add-frais-btn" onclick="addFraisLine()">+ Ajouter une charge</button>
+
+      <div class="frais-total" style="margin-top:14px;">
+        <span>Total charges annuelles</span>
+        <span id="frais-tot">0 €</span>
+      </div>
+      <div class="note">Saisie en mensuel · Total annuel calculé automatiquement. Les charges réelles sont déductibles si vous passez en <span>déclaration contrôlée</span>. Charges sociales identiques dans les deux cas.</div>
+    </div>
+
+    <!-- VERDICT + TABLEAU -->
+    <div class="col">
+
+      <div class="verdict-panel" id="verdict-panel">
+        <div class="v-top">
+          <span class="v-icon" id="v-icon">💡</span>
+          <div>
+            <div class="v-title" id="v-title" style="color:var(--muted)">Saisissez votre CA et vos charges</div>
+            <div class="v-eco" id="v-eco"></div>
+          </div>
+        </div>
+        <div class="v-body" id="v-body">Renseignez votre revenu et vos charges pro pour obtenir une recommandation.</div>
+        <div class="seuil-wrap" id="seuil-wrap" style="display:none;">
+          <div class="seuil-title">Tes charges vs seuil de déclenchement</div>
+          <div class="seuil-labels"><span>0 €</span><span id="sl-max"></span></div>
+          <div class="seuil-track">
+            <div class="seuil-fill" id="seuil-fill" style="width:0%"></div>
+            <div class="seuil-marker" id="seuil-marker" style="left:34%" data-label="seuil"></div>
+          </div>
+          <div class="seuil-note" id="seuil-note"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ctitle">Comparaison annuelle</div>
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <td></td>
+              <td class="cmp-th" style="color:var(--acc)">ABATTEMENT<br><span style="font-size:10px;font-weight:400;color:var(--muted);font-family:'DM Mono',monospace" id="cmp-h-abat-sub">forfaitaire</span></td>
+              <td class="cmp-th" style="color:var(--blue)">CHARGES RÉELLES<br><span style="font-size:10px;font-weight:400;color:var(--muted);font-family:'DM Mono',monospace">décl. contrôlée</span></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Revenu annuel</td><td id="c-ca-b">—</td><td id="c-ca-r">—</td></tr>
+            <tr><td>Déduction</td><td id="c-ded-b" style="color:var(--muted)">—</td><td id="c-ded-r" style="color:var(--muted)">—</td></tr>
+            <tr class="hl"><td>Rev. imposable</td><td id="c-rni-b" style="color:var(--orange)">—</td><td id="c-rni-r" style="color:var(--blue)">—</td></tr>
+            <tr><td>Charges sociales</td><td id="c-urs-b" style="color:var(--orange)">—</td><td id="c-urs-r" style="color:var(--orange)">—</td></tr>
+            <tr><td>IR annuel</td><td id="c-ir-b" style="color:var(--blue)">—</td><td id="c-ir-r" style="color:var(--blue)">—</td></tr>
+            <tr><td>TMI</td><td id="c-tmi-b" style="color:var(--red)">—</td><td id="c-tmi-r" style="color:var(--red)">—</td></tr>
+            <tr class="hl"><td>Total prélevé</td><td id="c-chg-b" style="color:var(--red)">—</td><td id="c-chg-r" style="color:var(--red)">—</td></tr>
+            <tr class="fin"><td>🏦 NET annuel</td><td id="c-net-b" style="color:var(--green)">—</td><td id="c-net-r" style="color:var(--green)">—</td></tr>
+            <tr class="fin"><td>💰 Économie</td><td id="c-eco-b">—</td><td id="c-eco-r">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /tab-compare -->
+
+<!-- ===== ONGLET 3 — GRAPHIQUES ===== -->
+<div class="tab-panel" id="tab-graphs">
+<div class="print-sep">📈 Comprendre votre fiscalité</div>
+
+  <!-- BANDEAU CONTEXTE -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div class="ctitle" style="margin-bottom:4px;">Simulation en cours</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Régime : <b style="color:var(--text-dim)" id="g-regime-lbl">—</b></span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Votre CA : <b style="color:var(--acc)" id="g-ca-lbl">—</b></span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Charges : <b style="color:var(--orange)" id="g-charges-pct">—</b></span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Taux effectif : <b style="color:var(--red)" id="g-taux-eff">—</b></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="gc-inp-wrap"><span class="gc-sym">€</span><input type="number" id="g-min" value="500" min="0" oninput="updateCharts()"><span class="gc-unit"> min/mois</span></div>
+        <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;">→</span>
+        <div class="gc-inp-wrap"><span class="gc-sym">€</span><input type="number" id="g-max" value="10000" min="0" oninput="updateCharts()"><span class="gc-unit"> max/mois</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRAPHIQUE PRINCIPAL -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
+      <div>
+        <div class="ctitle" style="margin-bottom:4px;">Répartition de votre revenu selon le CA</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7;">
+          Comment chaque euro de CA se décompose à mesure que votre revenu augmente.<br>
+          La zone verte = ce que vous touchez réellement. Les zones orange et bleue = ce que vous provisionnez.
+        </div>
+      </div>
+      <div class="gc-series-row" id="gc-series">
+        <button class="serie-btn active" data-serie="charges" onclick="toggleSerie(this)"><span class="sb-dot" id="dot-charges"></span>Charges</button>
+        <button class="serie-btn active" data-serie="ir"      onclick="toggleSerie(this)"><span class="sb-dot" id="dot-ir"></span>IR</button>
+        <button class="serie-btn active" data-serie="total"   onclick="toggleSerie(this)"><span class="sb-dot" id="dot-total"></span>Total prélevé</button>
+        <button class="serie-btn active" data-serie="net"     onclick="toggleSerie(this)"><span class="sb-dot" id="dot-net"></span>Net</button>
+      </div>
+    </div>
+    <div style="position:relative;height:320px;">
+      <canvas id="chart-montants"></canvas>
+    </div>
+    <!-- Légende pédagogique -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;">
+      <div style="background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:10px 12px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Charges sociales</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);line-height:1.5;">Taux fixe sur votre CA. S'applique dès le premier euro. Finance votre retraite et santé.</div>
+      </div>
+      <div style="background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:10px 12px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Impôt sur le revenu</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);line-height:1.5;">Progressif : démarre seulement à partir d'un certain seuil de revenu imposable.</div>
+      </div>
+      <div style="background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:10px 12px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Net disponible</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);line-height:1.5;">Ce que vous pouvez dépenser après avoir provisionné charges et IR.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEUX GRAPHIQUES CÔTE À CÔTE -->
+  <div class="g2" style="margin-bottom:14px;">
+
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:4px;">Taux effectif global (%)</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+        Part totale de votre CA prélevée (charges + IR). Augmente avec le revenu car l'IR est progressif.
+      </div>
+      <div style="position:relative;height:220px;">
+        <canvas id="chart-taux"></canvas>
+      </div>
+      <!-- Seuils clés -->
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;">Seuils importants</div>
+        <div id="seuils-list" style="display:flex;flex-direction:column;gap:4px;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:4px;">Répartition en % du CA</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+        Comment la part de chaque poste évolue proportionnellement à votre revenu.
+      </div>
+      <div style="position:relative;height:220px;">
+        <canvas id="chart-pct"></canvas>
+      </div>
+      <div id="pct-insight" style="margin-top:12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7;background:var(--glass-bg-deep);border-radius:10px;padding:10px 12px;border:1px solid var(--brd);"></div>
+    </div>
+
+  </div>
+
+  <!-- TABLE DE RÉFÉRENCE -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div class="ctitle" style="margin-bottom:2px;">Table de référence</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Votre CA actuel est surligné · Valeurs arrondies à l'euro près</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="ref-table" id="ref-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">CA / mois</th>
+            <th>Charges</th>
+            <th>IR / mois</th>
+            <th>Total prélevé</th>
+            <th>Net / mois</th>
+            <th>Taux effectif</th>
+            <th>TMI</th>
+          </tr>
+        </thead>
+        <tbody id="ref-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /tab-graphs -->
+
+<!-- ===== ONGLET 4 — HISTORIQUE ===== -->
+<div class="tab-panel" id="tab-history">
+<div class="print-sep">📅 Historique mensuel</div>
+
+  <div class="g2" style="margin-bottom:14px;align-items:start;">
+
+    <!-- AJOUT MANUEL -->
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:0;">Ajouter une entrée</div>
+
+      <div class="hist-form">
+        <div class="hist-field">
+          <div class="hf-label">Mois / période</div>
+          <input type="month" id="h-date" class="hf-inp">
+        </div>
+        <div class="hist-field">
+          <div class="hf-label">Libellé (optionnel)</div>
+          <input type="text" id="h-label" class="hf-inp" placeholder="ex: Projet client X">
+        </div>
+        <div class="hist-field">
+          <div class="hf-label">CA mensuel (€)</div>
+          <input type="number" id="h-ca" class="hf-inp hf-num" placeholder="0" min="0">
+        </div>
+        <div class="hist-field">
+          <div class="hf-label">Charges sociales (€)</div>
+          <input type="number" id="h-charges" class="hf-inp hf-num" placeholder="auto" min="0">
+        </div>
+        <div class="hist-field">
+          <div class="hf-label">IR estimé (€)</div>
+          <input type="number" id="h-ir" class="hf-inp hf-num" placeholder="auto" min="0">
+        </div>
+        <div class="hist-field">
+          <div class="hf-label">Note (optionnel)</div>
+          <input type="text" id="h-note" class="hf-inp" placeholder="Remarque libre…">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+        <button class="hist-add-btn" onclick="addHistoryManual()">+ Ajouter manuellement</button>
+        <button class="hist-auto-btn" onclick="addHistoryFromCurrent()">⚡ Capturer le CA actuel</button>
+        <button class="hist-csv-btn" onclick="document.getElementById('csv-import-input').click()">📂 Importer CSV</button>
+        <input type="file" id="csv-import-input" accept=".csv" style="display:none" onchange="importCSV(this)">
+      </div>
+      <div class="note" style="margin-top:10px;">
+        <b>Capturer le CA actuel</b> importe automatiquement le CA, les charges et l'IR calculés dans l'onglet Calcul fiscal.
+      </div>
+    </div>
+
+    <!-- RÉSUMÉ RAPIDE -->
+    <div class="col">
+      <div class="card">
+        <div class="ctitle">Résumé de l'historique</div>
+        <div id="hist-summary" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);line-height:2;">
+          Aucune entrée pour le moment.
+        </div>
+      </div>
+      <div class="card">
+        <div class="ctitle">Graphique historique</div>
+        <div style="position:relative;height:220px;">
+          <canvas id="chart-history"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTE DES ENTRÉES -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+      <div class="ctitle" style="margin-bottom:0;">Toutes les entrées</div>
+      <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">
+        <button class="hist-annual-btn" id="hist-annual-select" onclick="openAnnualModal()">📋 Bilan annuel</button>
+      </div>
+    </div>
+
+    <!-- Filtre par année -->
+    <div id="hist-year-filter" class="hist-year-filter-bar" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;"></div>
+
+    <!-- Barre de tri -->
+    <div class="hist-sort-bar" style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--brd);">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Trier :</span>
+      <button class="hist-sort-btn active" data-sort="date"    onclick="setHistSort('date',this)">Date</button>
+      <button class="hist-sort-btn"        data-sort="caM"     onclick="setHistSort('caM',this)">CA</button>
+      <button class="hist-sort-btn"        data-sort="charges" onclick="setHistSort('charges',this)">Charges</button>
+      <button class="hist-sort-btn"        data-sort="ir"      onclick="setHistSort('ir',this)">IR</button>
+      <button class="hist-sort-btn"        data-sort="total"   onclick="setHistSort('total',this)">Total</button>
+      <button class="hist-sort-btn"        data-sort="net"     onclick="setHistSort('net',this)">Net</button>
+      <button class="hist-sort-btn"        data-sort="taux"    onclick="setHistSort('taux',this)">Taux</button>
+      <button class="hist-dir-btn" id="hist-dir-btn" onclick="toggleHistDir()">↓ Desc</button>
+    </div>
+
+    <div id="hist-list">
+      <div style="text-align:center;padding:30px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">
+        Aucune entrée. Ajoutez votre premier mois ci-dessus.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-history -->
+
+<!-- MODAL BILAN ANNUEL -->
+<div class="pdf-modal-overlay" id="annual-modal" style="display:none;" onclick="if(event.target===this)closeAnnualModal()">
+  <div class="pdf-modal">
+    <h3>📋 Bilan annuel</h3>
+    <div class="pdf-modal-sub">Sélectionnez l'année à exporter</div>
+    <div id="annual-year-list" class="pdf-options" style="max-height:280px;overflow-y:auto;"></div>
+    <div style="margin:14px 0 8px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Inclure dans le bilan</div>
+    <div class="pdf-options">
+      <div class="pdf-option"><input type="checkbox" id="ao-mensuel" checked><label for="ao-mensuel">Détail mois par mois</label></div>
+      <div class="pdf-option"><input type="checkbox" id="ao-chart"   checked><label for="ao-chart">Graphique d'évolution annuelle</label></div>
+      <div class="pdf-option"><input type="checkbox" id="ao-notes"        ><label for="ao-notes">Notes / commentaires</label></div>
+    </div>
+    <div class="pdf-modal-actions">
+      <button class="pdf-modal-cancel" onclick="closeAnnualModal()">Annuler</button>
+      <button class="pdf-modal-confirm" onclick="confirmAnnualExport()">Générer le bilan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ZONE IMPRESSION BILAN ANNUEL -->
+<div id="annual-print-zone" style="display:none;">
+  <div id="apz-content"></div>
+  <canvas id="chart-annual-print" style="max-height:300px;width:100%;margin-top:20px;"></canvas>
+</div>
+
+<!-- ===== ONGLET 5 — OUTILS ===== -->
+<div class="tab-panel" id="tab-outils">
+
+  <div class="g2" style="margin-bottom:14px;align-items:start;">
+
+    <!-- OBJECTIF NET → CA -->
+    <div class="card">
+      <div class="ctitle">🎯 Objectif net → CA à facturer</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.7;">
+        Saisissez le net mensuel que vous souhaitez percevoir — l'outil calcule le CA brut à facturer.
+      </div>
+      <div class="hist-field" style="margin-bottom:12px;">
+        <div class="hf-label">Net mensuel souhaité (€)</div>
+        <div class="inp-wrap">
+          <span class="inp-sym" style="font-size:16px;top:50%;left:12px;">€</span>
+          <input type="number" id="obj-net" class="ca-inp" style="font-size:20px;padding:13px 12px 13px 34px;" placeholder="3 000" min="0" oninput="calcObjectif()">
+        </div>
+      </div>
+      <div id="obj-result" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div class="mc"><div class="ml">CA mensuel brut</div><div class="mv" style="color:var(--acc);font-size:18px;" id="obj-ca">—</div></div>
+          <div class="mc"><div class="ml">CA annuel</div><div class="mv" style="color:var(--text-dim);" id="obj-ca-a">—</div></div>
+          <div class="mc"><div class="ml">Charges/mois</div><div class="mv" style="color:var(--orange);" id="obj-ch">—</div></div>
+          <div class="mc"><div class="ml">IR/mois</div><div class="mv" style="color:var(--blue);" id="obj-ir">—</div></div>
+          <div class="mc"><div class="ml">Total à provisionner</div><div class="mv" style="color:var(--red);" id="obj-tot">—</div></div>
+          <div class="mc"><div class="ml">Taux effectif</div><div class="mv" style="color:var(--muted);" id="obj-taux">—</div></div>
+        </div>
+        <div class="note">Régime actif : <span id="obj-regime" style="color:var(--acc)">—</span>. Pour modifier le régime, retournez dans l'onglet Calcul fiscal.</div>
+      </div>
+    </div>
+
+    <!-- SEUILS TVA -->
+    <div class="card">
+      <div class="ctitle">⚡ Seuils TVA franchise</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.7;">
+        En franchise de TVA, vous ne la facturez pas. Dépassement = assujettissement immédiat.
+      </div>
+      <div id="tva-detail" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div class="note" style="margin-top:14px;">
+        Seuils valables pour la <b style="color:var(--text-dim)">France métropolitaine</b>. En cas de dépassement pendant 2 années consécutives, la TVA s'applique dès le 1er janvier suivant.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PRÉVISIONNEL FIN D'ANNÉE -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="ctitle">📆 Prévisionnel fin d'année</div>
+    <div id="previsionnel-content">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:20px;">
+        Ajoutez des entrées dans l'historique pour activer le prévisionnel.
+      </div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px;align-items:start;">
+
+    <!-- SIMULATEUR RETRAITE -->
+    <div class="card">
+      <div class="ctitle">🧓 Simulateur retraite (estimatif)</div>
+
+      <!-- Source des données -->
+      <div id="ret-source-info" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:10px 14px;margin-bottom:16px;">
+        Chargement…
+      </div>
+
+      <div class="hist-field" style="margin-bottom:10px;">
+        <div class="hf-label">Âge actuel</div>
+        <input type="number" id="ret-age" class="hf-inp hf-num" value="30" min="18" max="64" oninput="calcRetraite()">
+      </div>
+      <div class="hist-field" style="margin-bottom:10px;">
+        <div class="hf-label">Années de carrière déjà cotisées (avant le freelance)</div>
+        <input type="number" id="ret-annees" class="hf-inp hf-num" value="0" min="0" max="44" oninput="calcRetraite()">
+      </div>
+
+      <div id="ret-result" style="margin-top:14px;display:flex;flex-direction:column;gap:0;"></div>
+
+      <!-- Disclaimer -->
+      <div class="note" style="margin-top:14px;border-color:rgba(255,170,64,.2);">
+        ⚠️ <b style="color:var(--orange)">Estimation uniquement basée sur les données transmises.</b> Ce calcul est indicatif et simplifié — il ne tient pas compte de votre carrière complète, des régimes complémentaires (CIPAV, ARRCO…) ni des évolutions législatives. Plus vous renseignez de mois dans <b style="color:var(--text-dim)">l'historique</b>, plus la moyenne CA utilisée est fiable.<br><br>
+        Pour une estimation précise, consultez votre relevé de carrière sur <b>info-retraite.fr</b>.
+      </div>
+    </div>
+
+    <!-- SIMULATEUR SASU/EURL -->
+    <div class="card">
+      <div class="ctitle">🏢 Micro vs Société (SASU/EURL)</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.7;">
+        Comparaison indicative entre rester en micro et passer en société. Ne tient pas compte des frais comptables.
+      </div>
+      <div class="hist-field" style="margin-bottom:10px;">
+        <div class="hf-label">Salaire net dirigeant/mois (€)</div>
+        <input type="number" id="soc-sal" class="hf-inp hf-num" placeholder="2 500" oninput="calcSociete()">
+      </div>
+      <div class="hist-field" style="margin-bottom:10px;">
+        <div class="hf-label">Dividendes annuels souhaités (€)</div>
+        <input type="number" id="soc-div" class="hf-inp hf-num" placeholder="10 000" oninput="calcSociete()">
+      </div>
+      <div id="soc-result" style="margin-top:14px;"></div>
+    </div>
+
+  </div>
+
+  <!-- IMPORT RELEVÉ BANCAIRE -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="ctitle">🏦 Import relevé bancaire → Historique</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.7;">
+      Importez le CSV de votre banque pro. L'outil détecte les encaissements, les regroupe <b style="color:var(--text-dim)">mois par mois</b> et génère automatiquement les entrées d'historique.
+    </div>
+
+    <!-- Formats supportés -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;color:var(--muted);">Shine ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;color:var(--muted);">Qonto ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;color:var(--muted);">Société Générale ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;color:var(--muted);">BNP ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;color:var(--muted);">Crédit Agricole ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;color:var(--muted);">La Banque Postale ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;background:rgba(157,141,247,.1);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;color:var(--acc);">Format générique</span>
+    </div>
+
+    <!-- Options de parsing -->
+    <div class="g2" style="gap:10px;margin-bottom:16px;">
+      <div class="hist-field">
+        <div class="hf-label">Séparateur CSV</div>
+        <div style="display:flex;gap:5px;">
+          <button class="tva-rate-btn active" id="bank-sep-semi" onclick="setBankSep(';',this)">; point-virgule</button>
+          <button class="tva-rate-btn" id="bank-sep-comma" onclick="setBankSep(',',this)">, virgule</button>
+          <button class="tva-rate-btn" id="bank-sep-tab" onclick="setBankSep('\t',this)">⇥ tabulation</button>
+        </div>
+      </div>
+      <div class="hist-field">
+        <div class="hf-label">Ne comptabiliser que</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          <button class="tva-rate-btn active" id="bank-dir-credit" onclick="setBankDir('credit',this)">Encaissements (+)</button>
+          <button class="tva-rate-btn" id="bank-dir-all" onclick="setBankDir('all',this)">Tout le flux</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone de drop / bouton -->
+    <div id="bank-drop-zone" class="bank-drop" onclick="document.getElementById('bank-file-input').click()" ondragover="bankDragOver(event)" ondrop="bankDrop(event)">
+      <div style="font-size:28px;margin-bottom:8px;">🏦</div>
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text-dim);margin-bottom:4px;">Glissez votre relevé ici</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">ou cliquez pour choisir un fichier CSV</div>
+    </div>
+    <input type="file" id="bank-file-input" accept=".csv,.tsv,.txt" style="display:none" onchange="loadBankCSV(this)">
+
+    <!-- Filtre montant minimum -->
+    <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Ignorer les montants inférieurs à :</span>
+      <div class="gc-inp-wrap" style="padding:4px 10px;">
+        <span class="gc-sym" style="font-size:12px;">€</span>
+        <input type="number" id="bank-min-amount" value="0" min="0" style="width:60px;font-size:13px;" placeholder="0">
+      </div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">(ex : filtrer les petits virements internes)</span>
+    </div>
+  </div>
+
+  <!-- PARTAGE & EXPORT -->
+  <div class="card">
+    <div class="ctitle">🔗 Partage & Export</div>
+    <div class="g2" style="gap:10px;">
+
+      <!-- Lien de partage -->
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Lien de partage</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.7;">
+          Génère un lien contenant votre régime et votre CA pour partager une simulation.
+        </div>
+        <button class="hist-add-btn" onclick="genererLien()" style="width:100%;text-align:center;">🔗 Générer le lien</button>
+        <div id="share-link-wrap" style="display:none;margin-top:10px;">
+          <input id="share-link" class="hf-inp" type="text" readonly style="font-size:10px;cursor:pointer;" onclick="this.select();document.execCommand('copy');showCopyToast()">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-top:5px;" id="copy-toast" style="display:none;">✓ Copié !</div>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Exporter l'historique</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.7;">
+          Choisissez le format d'export pour votre comptable ou tableur.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button class="export-fmt-btn" onclick="exportFormat('csv')">📄 CSV — Excel, Numbers, LibreOffice</button>
+          <button class="export-fmt-btn" onclick="exportFormat('json')">📦 JSON — Sauvegarde complète</button>
+          <button class="export-fmt-btn" onclick="exportFormat('pdf')">🖨️ PDF — Impression / archivage</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /tab-outils -->
+
+<!-- MODAL IMPORT BANQUE -->
+<div class="pdf-modal-overlay" id="bank-modal" style="display:none;" onclick="if(event.target===this)closeBankModal()">
+  <div class="pdf-modal" style="max-width:680px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
+    <h3>🏦 Relevé bancaire détecté</h3>
+    <div class="pdf-modal-sub" id="bank-modal-sub">Vérifiez les données avant d'importer dans l'historique</div>
+
+    <!-- Mapping colonnes -->
+    <div id="bank-col-mapping" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+
+    <!-- Aperçu mensuel -->
+    <div style="flex:1;overflow-y:auto;min-height:0;">
+      <div id="bank-month-preview" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+
+    <div class="note" id="bank-modal-note" style="margin:12px 0 0;"></div>
+    <div class="pdf-modal-actions" style="margin-top:12px;">
+      <button class="pdf-modal-cancel" onclick="closeBankModal()">Annuler</button>
+      <button class="pdf-modal-confirm" id="bank-confirm-btn" onclick="confirmBankImport()">Importer dans l'historique</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPORT CSV -->
+<div class="pdf-modal-overlay" id="csv-modal" style="display:none;" onclick="if(event.target===this)document.getElementById('csv-modal').style.display='none'">
+  <div class="pdf-modal">
+    <h3>📂 Import CSV</h3>
+    <div class="pdf-modal-sub">Prévisualisez les données avant importation</div>
+    <div id="csv-preview" style="max-height:280px;overflow-y:auto;font-family:'DM Mono',monospace;font-size:10px;"></div>
+    <div class="note" style="margin-top:12px;" id="csv-info"></div>
+    <div class="pdf-modal-actions">
+      <button class="pdf-modal-cancel" onclick="document.getElementById('csv-modal').style.display='none'">Annuler</button>
+      <button class="pdf-modal-confirm" id="csv-confirm-btn" onclick="confirmCSVImport()">Importer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LIEN PARTAGE -->
+<div class="pdf-modal-overlay" id="share-modal" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="pdf-modal" style="max-width:480px;">
+    <h3>🔗 Lien de partage</h3>
+    <div class="pdf-modal-sub">Ce lien contient votre régime et votre CA actuel</div>
+    <input id="share-link-full" class="hf-inp" type="text" readonly style="font-size:11px;cursor:pointer;margin-bottom:10px;" onclick="this.select();navigator.clipboard?.writeText(this.value);document.getElementById('share-copied').style.display='block'">
+    <div id="share-copied" style="display:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);margin-bottom:10px;">✓ Copié dans le presse-papier !</div>
+    <div class="pdf-modal-actions">
+      <button class="pdf-modal-confirm" onclick="document.getElementById('share-modal').style.display='none'">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="global-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--glass-bg-act);backdrop-filter:blur(20px);border:1px solid var(--brd-hi);border-radius:22px;padding:10px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);z-index:500;box-shadow:var(--shadow-glass);"></div>
+
+<div class="disclaimer">
+  Barème IR progressif · Taux charges sociales · Calcul indicatif — pas de conseil fiscal<br>
+  Consultez un expert-comptable pour valider votre situation personnelle
+</div>
+</div>
+
+<!-- ZONE D'IMPRESSION HISTORIQUE -->
+<div id="hist-print-zone">
+  <div class="hpz-header"><h2 id="hpz-title">Relevé mensuel</h2><div class="hpz-meta" id="hpz-meta"></div></div>
+  <div class="hpz-grid" id="hpz-grid"></div>
+  <div id="hpz-chart-wrap"><canvas id="chart-print" style="max-height:260px;"></canvas></div>
+</div>
+
+<!-- MODAL PDF -->
+<div class="pdf-modal-overlay" id="pdf-modal" style="display:none;" onclick="if(event.target===this)closePdfModal()">
+  <div class="pdf-modal">
+    <h3>🖨️ Exporter en PDF</h3>
+    <div class="pdf-modal-sub" id="pdf-modal-sub">Choisissez les éléments à inclure dans le PDF</div>
+    <div class="pdf-options">
+      <div class="pdf-option"><input type="checkbox" id="po-ca" checked><label for="po-ca">CA / Revenu mensuel</label></div>
+      <div class="pdf-option"><input type="checkbox" id="po-charges" checked><label for="po-charges">Charges sociales</label></div>
+      <div class="pdf-option"><input type="checkbox" id="po-ir" checked><label for="po-ir">IR estimé du mois</label></div>
+      <div class="pdf-option"><input type="checkbox" id="po-net" checked><label for="po-net">Net disponible</label></div>
+      <div class="pdf-option"><input type="checkbox" id="po-total" checked><label for="po-total">Total prélevé</label></div>
+      <div class="pdf-option"><input type="checkbox" id="po-taux" checked><label for="po-taux">Taux effectif</label></div>
+      <div class="pdf-option"><input type="checkbox" id="po-chart" checked><label for="po-chart">Graphique d'évolution jusqu'à ce point</label></div>
+      <div class="pdf-option"><input type="checkbox" id="po-note"><label for="po-note">Note / commentaire</label></div>
+    </div>
+    <div class="pdf-modal-actions">
+      <button class="pdf-modal-cancel" onclick="closePdfModal()">Annuler</button>
+      <button class="pdf-modal-confirm" onclick="confirmPdfExport()">Générer le PDF</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// =====================
+//  RÉGIMES
+// =====================
+const REGIMES = {
+  'bnc':     { charges:0.256, abat:0.34,  label:'Micro-BNC',          chargesLbl:'URSSAF (25,6%)',      abatLbl:'Abattement 34%'          },
+  'bic-s':   { charges:0.256, abat:0.50,  label:'Micro-BIC Services',  chargesLbl:'URSSAF (25,6%)',      abatLbl:'Abattement 50%'          },
+  'bic-v':   { charges:0.123, abat:0.71,  label:'Micro-BIC Vente',     chargesLbl:'URSSAF (12,3%)',      abatLbl:'Abattement 71%'          },
+  'ag':      { charges:0.256, abat:0.34,  label:'Auto-entrepreneur',   chargesLbl:'URSSAF (25,6%)',      abatLbl:'Abattement 34%'          },
+  'salarie': { charges:0.22,  abat:0.10,  label:'Salarié / Portage',   chargesLbl:'Charges sal. (~22%)', abatLbl:'Déd. forfaitaire 10%'    },
+  'custom':  { charges:0.256, abat:0.34,  label:'Personnalisé',        chargesLbl:'Charges perso.',      abatLbl:'Abattement perso.'       },
+};
+
+let currentRegime = 'bnc';
+let CHARGES = 0.256;
+let ABAT    = 0.34;
+
+// =====================
+//  TRANCHES IR
+// =====================
+const TRANCHES = [
+  { de:0,      a:11294,     taux:0,    cls:'c0',  lbl:'≤ 11 294 €'         },
+  { de:11294,  a:28797,     taux:0.11, cls:'c11', lbl:'11 295 → 28 797 €'  },
+  { de:28797,  a:82341,     taux:0.30, cls:'c30', lbl:'28 798 → 82 341 €'  },
+  { de:82341,  a:177106,    taux:0.41, cls:'c41', lbl:'82 342 → 177 106 €' },
+  { de:177106, a:999999999, taux:0.45, cls:'c45', lbl:'> 177 106 €'        },
+];
+const TR_COLORS = ['var(--green)','#a8e063','var(--orange)','#f09a3e','var(--red)'];
+
+const STORAGE_KEY = 'fiscal_v2'; // v2 — réinitialise les anciens saves
+
+// =====================
+//  UTILS
+// =====================
+const fmt = v => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Math.round(v));
+const pct = (v,t) => t>0 ? (v/t*100).toFixed(1)+'% du CA' : '—';
+function set(id,v)    { const e=document.getElementById(id); if(e) e.textContent=v; }
+function setH(id,v)   { const e=document.getElementById(id); if(e) e.innerHTML=v;  }
+
+function calcIR(rni) {
+  let total=0;
+  for(const tr of TRANCHES) {
+    if(rni<=tr.de) break;
+    total += (Math.min(rni,tr.a)-tr.de)*tr.taux;
+  }
+  return total;
+}
+function getTMI(rni) {
+  let tmi=TRANCHES[0];
+  for(const tr of TRANCHES) { if(rni>tr.de) tmi=tr; }
+  return tmi;
+}
+function trancheDetail(rni) {
+  return TRANCHES.map(tr=>{
+    const on   = rni>tr.de;
+    const base = on ? Math.min(rni,tr.a)-tr.de : 0;
+    return {...tr, base, irv:base*tr.taux, on};
+  });
+}
+
+// =====================
+//  RÉGIME
+// =====================
+function setRegime(btn) {
+  document.querySelectorAll('.regime-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentRegime = btn.dataset.regime;
+  const r = REGIMES[currentRegime];
+  CHARGES = r.charges;
+  ABAT    = r.abat;
+
+  // Custom panel
+  const cw = document.getElementById('custom-wrap');
+  if(currentRegime==='custom') {
+    cw.style.display='block';
+    CHARGES = parseFloat(document.getElementById('r-charges').value)/100 || 0.256;
+    ABAT    = parseFloat(document.getElementById('r-abat').value)/100    || 0.34;
+  } else {
+    cw.style.display='none';
+    document.getElementById('r-charges').value = (r.charges*100).toFixed(1);
+    document.getElementById('r-abat').value    = (r.abat*100).toFixed(1);
+  }
+
+  updateRegimeBadge();
+  markDirty();
+  calc();
+  calcCmp();
+}
+
+function applyCustomRates() {
+  CHARGES = parseFloat(document.getElementById('r-charges').value)/100 || 0;
+  ABAT    = parseFloat(document.getElementById('r-abat').value)/100    || 0;
+  updateRegimeBadge();
+  calc();
+  calcCmp();
+}
+
+function updateRegimeBadge() {
+  const r = REGIMES[currentRegime];
+  const chargesRate = (CHARGES*100).toFixed(1);
+  const abatRate    = (ABAT*100).toFixed(1);
+  const rniRate     = (100-ABAT*100).toFixed(0);
+  setH('regime-badge',
+    `<span class="badge-item">Régime : <b>${r.label}</b></span>
+     <span class="badge-sep">·</span>
+     <span class="badge-item">Charges : <span>${chargesRate}%</span></span>
+     <span class="badge-sep">·</span>
+     <span class="badge-item">Abattement : <span>${abatRate}%</span></span>
+     <span class="badge-sep">·</span>
+     <span class="badge-item">Revenu imposable : <span>${rniRate}% du CA</span></span>`
+  );
+  // Labels dynamiques
+  const cl = r.chargesLbl;
+  set('lbl-charges',  cl);
+  set('ml-charges',   cl);
+  set('an-charges-lbl', cl);
+  set('leg-charges',  '■ '+cl);
+  // Abattement row
+  const abatRow = document.getElementById('an-abat-row');
+  if(ABAT===0) { abatRow.style.display='none'; } else {
+    abatRow.style.display='';
+    set('an-abat-lbl', r.abatLbl);
+  }
+  // Comparateur header
+  set('cmp-h-abat-sub', ABAT>0 ? `abat. ${abatRate}%` : 'sans abattement');
+  setH('cmp-regime-note', ABAT>0
+    ? `Régime actuel : <b style="color:var(--acc)">${r.label}</b> — abattement forfaitaire <b style="color:var(--acc)">${abatRate}%</b>. Les frais réels sont intéressants si vos dépenses dépassent <b>${abatRate}% de votre CA</b>.`
+    : `Régime actuel : <b style="color:var(--acc)">${r.label}</b> — pas d'abattement forfaitaire. Comparez avec vos frais réels déductibles.`
+  );
+}
+
+// =====================
+//  ONGLET 1
+// =====================
+let periode = 'm';
+let sharedCaM = 0; // CA mensuel partagé entre tous les onglets
+
+function calc() {
+  const raw = parseFloat(document.getElementById('ca').value)||0;
+  const caM = periode==='m'?raw:periode==='t'?raw/3:raw/12;
+
+  // CA HT = base fiscale (hors TVA si assujetti)
+  const caMht = getCaHT(caM);
+  const caA   = caMht*12;
+
+  // TVA collectée
+  const tvaM  = tvaOn && tvaMode==='ht'  ? caM*tvaRate/100
+              : tvaOn && tvaMode==='ttc' ? caM - caMht
+              : 0;
+
+  // Synchronise le CA partagé (toujours en HT pour les graphiques/comparateur)
+  sharedCaM = caMht;
+  syncSharedCA();
+  updateCAHint();
+
+  const chA = caA*CHARGES, chM = chA/12;
+  const rniA = caA*(1-ABAT);
+  const det  = trancheDetail(rniA);
+  const irBrut = det.reduce((s,d)=>s+d.irv,0);
+  const irFactor = getIRFactor();
+  const irA  = irBrut * irFactor;
+  const irM  = irA/12;
+  const totM = chM+irM, netM = caMht-totM;
+  const tmiObj = getTMI(rniA);
+  const tmiIdx = TRANCHES.indexOf(tmiObj);
+
+  const anim = id=>{const e=document.getElementById(id);e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop');};
+  ['r-ca','r-charges-v','r-ir','r-total','r-net','prov-m'].forEach(anim);
+
+  // Affichage : CA HT = base des calculs
+  const caLbl = tvaOn
+    ? `${fmt(caMht)} HT${tvaM>0?' + '+fmt(tvaM)+' TVA':''}`
+    : fmt(caMht);
+  set('r-ca', caLbl);
+  set('r-charges-v',fmt(chM)); set('r-charges-p',pct(chM,caMht));
+  set('r-ir', exoIROn && irFactor===0 ? '0 € (exonéré)' : exoIROn && irFactor<1 ? fmt(irM)+' (exo '+Math.round((1-irFactor)*100)+'%)' : fmt(irM));
+  set('r-ir-p', exoIROn && irFactor===0 ? 'Exonéré' : pct(irM,caMht));
+  set('r-total',fmt(totM));    set('r-total-p',pct(totM,caMht));
+  set('r-net',fmt(netM));      set('r-net-p',pct(netM,caMht));
+  set('prov-m',fmt(totM)); set('prov-t',fmt(totM*3)); set('prov-a',fmt(totM*12));
+  set('pm-c',fmt(chM)); set('pm-i',fmt(irM));
+  set('prov-sub', caA>0 ? `Soit ${pct(totM,caMht)} de votre CA HT` : 'Saisissez votre revenu pour commencer');
+
+  if(caMht>0) {
+    const pC=chM/caMht*100, pI=irM/caMht*100, pN=Math.max(0,100-pC-pI);
+    document.getElementById('b-c').style.width=pC+'%';
+    document.getElementById('b-i').style.width=pI+'%';
+    document.getElementById('b-n').style.width=pN+'%';
+  } else ['b-c','b-i','b-n'].forEach(id=>document.getElementById(id).style.width='0%');
+
+  set('an-ca', caA>0?fmt(caA)+(tvaOn?' HT':''):'—');
+  set('an-abat', caA>0?'−'+fmt(caA*ABAT):'—');
+  set('an-rni', caA>0?fmt(rniA):'—');
+  set('an-charges', caA>0?fmt(chA):'—');
+  set('an-ir', caA>0?fmt(irA):'—');
+  set('an-net', caA>0?fmt(caA-chA-irA):'—');
+
+  // IR visuel
+  if(caA>0) {
+    const tmiEl=document.getElementById('tmi-big');
+    tmiEl.textContent=Math.round(tmiObj.taux*100)+'%';
+    tmiEl.className='tmi-val '+tmiObj.cls;
+    set('tmi-rni', fmt(rniA));
+    set('tmi-ir-an', fmt(irA));
+    set('tmi-ir-mo', fmt(irM)+' / mois');
+
+    // Résumé
+    const col = TR_COLORS[tmiIdx];
+    setH('ir-r1', ABAT>0
+      ? `CA <span>${fmt(caA)}</span>/an − ${(ABAT*100).toFixed(0)}% d'abattement = <span>${fmt(rniA)}</span> imposable.`
+      : `Revenu <span>${fmt(caA)}</span>/an, pas d'abattement → <span>${fmt(rniA)}</span> imposable.`
+    );
+    setH('ir-r2', `Barème progressif → IR de <b>${fmt(irA)}</b>/an soit <b>${fmt(irM)}</b>/mois.`);
+    setH('ir-r3', `Tranche marginale : <b style="color:${col}">${Math.round(tmiObj.taux*100)}%</b>${tmiObj.taux>0?' sur la partie au-delà de '+fmt(tmiObj.de)+'.':' — revenu non imposable.'}`);
+    document.getElementById('ir-r1').style.display='';
+    document.getElementById('ir-r2').style.display='';
+    document.getElementById('ir-r3').style.display='';
+
+    // Tranches barres
+    const maxIR=Math.max(...det.map(d=>d.irv),1);
+    document.getElementById('tr-visual').innerHTML=det.map((d,i)=>`
+      <div class="trv-row">
+        <div class="trv-header">
+          <div class="trv-name">
+            <div class="trv-dot" style="background:${d.on?TR_COLORS[i]:'var(--brd)'}"></div>
+            <span class="trv-lbl ${d.on?'on':''}">${Math.round(d.taux*100)}% — ${d.lbl}</span>
+          </div>
+          <span class="trv-amt ${d.on&&d.irv>0?'on':''}">${d.on&&d.irv>0?fmt(d.irv)+'/an':d.on&&d.taux===0?'non imposé':'—'}</span>
+        </div>
+        <div class="trv-track">
+          <div class="trv-fill" style="width:${d.on&&d.irv>0?Math.round(d.irv/maxIR*100):0}%;background:${TR_COLORS[i]}"></div>
+        </div>
+      </div>
+    `).join('');
+
+    // Steps
+    document.getElementById('ir-steps').innerHTML=[
+      {l:'CA / Revenu annuel',         v:fmt(caA),                    s:''},
+      ...(ABAT>0?[{l:`− Abattement ${(ABAT*100).toFixed(0)}%`, v:'−'+fmt(caA*ABAT), s:'color:var(--muted)'}]:[]),
+      {l:'= Revenu imposable',          v:fmt(rniA),                   s:'color:var(--orange)'},
+      ...det.filter(d=>d.on).map((d,i)=>({
+        l:`Tranche ${Math.round(d.taux*100)}% sur ${fmt(d.base)}`,
+        v:d.taux===0?'0 €':fmt(d.irv),
+        s:`color:${TR_COLORS[TRANCHES.indexOf(d)]}`
+      })),
+      {l:'IR annuel total',             v:fmt(irA),                    s:'tot'},
+      {l:'IR mensuel (÷ 12)',           v:fmt(irM),                    s:'tot'},
+    ].map(r=>`
+      <div class="ir-step ${r.s==='tot'?'tot':''}">
+        <span>${r.l}</span>
+        <span style="${r.s!=='tot'?r.s:''}">${r.v}</span>
+      </div>
+    `).join('');
+
+  } else {
+    document.getElementById('tmi-big').textContent='—';
+    document.getElementById('tmi-big').className='tmi-val';
+    set('tmi-rni','—'); set('tmi-ir-an','—'); set('tmi-ir-mo','—');
+    setH('ir-r1','<span style="color:var(--muted)">Saisissez votre CA pour voir le calcul.</span>');
+    document.getElementById('ir-r1').style.display='';
+    document.getElementById('ir-r2').style.display='none';
+    document.getElementById('ir-r3').style.display='none';
+    document.getElementById('tr-visual').innerHTML='';
+    document.getElementById('ir-steps').innerHTML='';
+  }
+}
+
+function setPeriode(el,p) {
+  document.querySelectorAll('.tog .tog-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); periode=p; calc();
+}
+
+// Sync CA vers onglets 2 et 3
+function syncSharedCA() {
+  const label = sharedCaM > 0
+    ? `${Math.round(sharedCaM).toLocaleString('fr-FR')} €/mois`
+    : '— (non renseigné)';
+  const el = document.getElementById('cmp-ca-display');
+  if (el) el.textContent = label;
+  const gl = document.getElementById('g-ca-lbl');
+  if (gl) gl.textContent = sharedCaM > 0 ? Math.round(sharedCaM).toLocaleString('fr-FR')+' €/mois' : '—';
+  const rl = document.getElementById('g-regime-lbl');
+  if (rl) rl.textContent = REGIMES[currentRegime]?.label || '—';
+  calcCmp();
+}
+
+// =====================
+//  FRAIS DYNAMIQUES
+// =====================
+const CATS = [
+  { emoji:'🖥️', label:'Matériel' },
+  { emoji:'💻', label:'Logiciels' },
+  { emoji:'🌐', label:'Communication' },
+  { emoji:'🏠', label:'Local / Bureau' },
+  { emoji:'✈️', label:'Déplacements' },
+  { emoji:'📚', label:'Formation' },
+  { emoji:'⚖️', label:'Comptabilité / Juridique' },
+  { emoji:'🏦', label:'Banque / Assurance' },
+  { emoji:'📦', label:'Autre' },
+];
+
+let fraisLines = []; // [{id, cat, label, amount}]
+let fraisIdCounter = 0;
+
+const CAT_OPTIONS = CATS.map(c => `<option value="${c.emoji}">${c.emoji} ${c.label}</option>`).join('');
+
+function addFraisLine(cat='📦', label='', amount='', annual=false) {
+  const id = ++fraisIdCounter;
+  fraisLines.push({ id, cat, label, amount, annual });
+  renderFraisList();
+  // Focus sur le nouveau label
+  setTimeout(() => {
+    const inp = document.querySelector(`[data-fid="${id}"] .frais-label-inp`);
+    if (inp) inp.focus();
+  }, 50);
+  markDirty();
+}
+
+function removeFraisLine(id) {
+  fraisLines = fraisLines.filter(f => f.id !== id);
+  renderFraisList();
+  calcCmp();
+  markDirty();
+}
+
+function onFraisChange(id, field, value) {
+  const line = fraisLines.find(f => f.id === id);
+  if (line) line[field] = value;
+  updateFraisTotal();
+  calcCmp();
+  markDirty();
+}
+
+function updateFraisTotal() {
+  return fraisLines.reduce((s, f) => {
+    const v = parseFloat(f.amount) || 0;
+    return s + (f.annual ? v : v * 12);
+  }, 0);
+}
+
+function renderFraisList() {
+  const container = document.getElementById('frais-list');
+  if (fraisLines.length === 0) {
+    container.innerHTML = `<div class="frais-empty">Aucune charge ajoutée.<br>Cliquez sur "+ Ajouter une charge" pour commencer.</div>`;
+    return;
+  }
+  container.innerHTML = fraisLines.map(f => `
+    <div class="frais-dynamic-row" data-fid="${f.id}">
+      <button class="frais-del-btn" onclick="removeFraisLine(${f.id})" title="Supprimer">✕</button>
+      <select class="frais-cat-sel" onchange="onFraisChange(${f.id},'cat',this.value)">
+        ${CATS.map(c => `<option value="${c.emoji}" ${c.emoji===f.cat?'selected':''}>${c.emoji} ${c.label}</option>`).join('')}
+      </select>
+      <input class="frais-label-inp" type="text" placeholder="Nom de la charge…"
+        value="${f.label}"
+        oninput="onFraisChange(${f.id},'label',this.value)">
+      <div class="frais-amount-wrap">
+        <input class="frais-amount-inp" type="number" placeholder="0" min="0"
+          value="${f.amount}"
+          oninput="onFraisChange(${f.id},'amount',this.value)">
+        <div class="frais-period-tog">
+          <button class="${!f.annual?'active':''}" onclick="onFraisChange(${f.id},'annual',false);renderFraisList();calcCmp();">m</button>
+          <button class="${f.annual?'active':''}" onclick="onFraisChange(${f.id},'annual',true);renderFraisList();calcCmp();">an</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// =====================
+//  TVA
+// =====================
+let tvaOn   = false;   // assujetti ou non
+let tvaRate = 20;      // taux TVA %
+let tvaMode = 'ht';    // 'ht' = CA saisi HT, 'ttc' = CA saisi TTC
+
+function toggleTVA() {
+  tvaOn = !tvaOn;
+  const sw = document.getElementById('tva-switch');
+  const rw = document.getElementById('tva-rate-wrap');
+  const lbl= document.getElementById('tva-status-lbl');
+  sw.classList.toggle('on', tvaOn);
+  rw.style.display = tvaOn ? 'block' : 'none';
+  lbl.textContent  = tvaOn ? 'Assujetti TVA' : 'Franchise TVA';
+  lbl.style.color  = tvaOn ? 'var(--blue)' : 'var(--muted)';
+  calc(); markDirty();
+}
+
+function setTVARate(rate, btn) {
+  tvaRate = rate;
+  document.querySelectorAll('.tva-rate-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calc(); markDirty();
+}
+
+function setTVAMode(mode, btn) {
+  tvaMode = mode;
+  document.querySelectorAll('.tva-mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateCAHint();
+  calc(); markDirty();
+}
+
+function updateCAHint() {
+  const raw = parseFloat(document.getElementById('ca').value) || 0;
+  const hint = document.getElementById('ca-label-hint');
+  const tl   = document.getElementById('tva-toggle-hint');
+  const dl   = document.getElementById('tva-detail-line');
+  if (!tvaOn || !raw) {
+    if (hint) hint.textContent = '';
+    if (tl)   tl.textContent = 'Votre CA est saisi HT ou TTC ?';
+    if (dl)   dl.innerHTML = '';
+    return;
+  }
+  const caM = periode==='m' ? raw : periode==='t' ? raw/3 : raw/12;
+  if (tvaMode === 'ht') {
+    const ttc = caM * (1 + tvaRate/100);
+    const tvaM = caM * tvaRate/100;
+    if (hint) hint.textContent = 'CA saisi HT';
+    if (tl)   tl.textContent = 'Vous saisissez HT — la TVA est calculée en supplément';
+    if (dl)   dl.innerHTML = `CA HT : <b style="color:var(--text-dim)">${fmt(caM)}</b> · TVA collectée : <b style="color:var(--blue)">${fmt(tvaM)}</b> · CA TTC facturé : <b style="color:var(--acc)">${fmt(ttc)}</b>/mois`;
+  } else {
+    const ht  = caM / (1 + tvaRate/100);
+    const tvaM= caM - ht;
+    if (hint) hint.textContent = 'CA saisi TTC — base HT utilisée pour les calculs';
+    if (tl)   tl.textContent = 'Vous saisissez TTC — on extrait le HT pour les calculs';
+    if (dl)   dl.innerHTML = `CA TTC : <b style="color:var(--text-dim)">${fmt(caM)}</b> · TVA collectée : <b style="color:var(--blue)">${fmt(tvaM)}</b> · CA HT utilisé : <b style="color:var(--acc)">${fmt(ht)}</b>/mois`;
+  }
+}
+
+// Retourne le CA HT mensuel à utiliser dans les calculs fiscaux
+function getCaHT(raw) {
+  // raw = valeur saisie (mensuelle)
+  if (!tvaOn) return raw;
+  if (tvaMode === 'ht')  return raw;                          // déjà HT
+  if (tvaMode === 'ttc') return raw / (1 + tvaRate / 100);   // extraire HT du TTC
+  return raw;
+}
+
+// =====================
+//  INIT FRAIS
+function initDefaultFrais() {
+  const defaults = [
+    { cat:'🖥️', label:'Matériel informatique',     amount:'', annual:false },
+    { cat:'💻', label:'Logiciels & abonnements',    amount:'', annual:false },
+    { cat:'🌐', label:'Téléphone & internet (pro)', amount:'', annual:false },
+    { cat:'🏠', label:'Bureau à domicile (part)',   amount:'', annual:false },
+    { cat:'⚖️', label:'Expert-comptable',           amount:'', annual:true  },
+    { cat:'🏦', label:'Frais bancaires pro',        amount:'', annual:false },
+  ];
+  fraisLines = defaults.map(d => ({ id: ++fraisIdCounter, ...d }));
+  renderFraisList();
+}
+
+// =====================
+//  ONGLET 2
+// =====================
+function calcCmp() {
+  const caM = sharedCaM;
+  const caA = caM * 12;
+  const fraisA = updateFraisTotal();
+  set('frais-tot',fmt(fraisA));
+
+  // Abattement
+  const rni_b=caA*(1-ABAT);
+  const ir_b=calcIR(rni_b);
+  const urs=caA*CHARGES;
+  const chg_b=ir_b+urs, net_b=caA-chg_b;
+  const tmi_b=getTMI(rni_b);
+
+  // Frais réels
+  const rni_r=Math.max(0,caA-fraisA);
+  const ir_r=calcIR(rni_r);
+  const chg_r=ir_r+urs, net_r=caA-chg_r;
+  const tmi_r=getTMI(rni_r);
+
+  const seuil=caA*ABAT;
+
+  if(caA>0){
+    set('c-ca-b',fmt(caA));  set('c-ca-r',fmt(caA));
+    set('c-ded-b', ABAT>0?'−'+fmt(seuil)+` (${(ABAT*100).toFixed(0)}%)`:'aucun');
+    set('c-ded-r','−'+fmt(fraisA)+' (réels)');
+    set('c-rni-b',fmt(rni_b)); set('c-rni-r',fmt(rni_r));
+    set('c-urs-b',fmt(urs));   set('c-urs-r',fmt(urs));
+    set('c-ir-b',fmt(ir_b));   set('c-ir-r',fmt(ir_r));
+    set('c-tmi-b',Math.round(tmi_b.taux*100)+'%');
+    set('c-tmi-r',Math.round(tmi_r.taux*100)+'%');
+    set('c-chg-b',fmt(chg_b)); set('c-chg-r',fmt(chg_r));
+    set('c-net-b',fmt(net_b)); set('c-net-r',fmt(net_r));
+
+    const diff=net_r-net_b;
+    const eB=document.getElementById('c-eco-b'),eR=document.getElementById('c-eco-r');
+    eB.textContent='—';eR.textContent='—';eB.style.color='';eR.style.color='';
+    if(Math.abs(diff)<50){eB.textContent='≈ équivalent';eR.textContent='≈ équivalent';}
+    else if(diff>0){eR.textContent='+'+fmt(diff);eR.style.color='var(--green)';}
+    else{eB.textContent='+'+fmt(-diff);eB.style.color='var(--green)';}
+
+    const panel=document.getElementById('verdict-panel');
+    document.getElementById('seuil-wrap').style.display='block';
+    const maxBar=Math.max(seuil*1.6,fraisA*1.1,100);
+    document.getElementById('seuil-fill').style.width=Math.min(fraisA/maxBar*100,100)+'%';
+    const sm=document.getElementById('seuil-marker');
+    sm.style.left=Math.min(seuil/maxBar*100,100)+'%';
+    sm.dataset.label='seuil '+fmt(seuil);
+    set('sl-max',fmt(maxBar));
+    panel.className='verdict-panel';
+
+    if(Math.abs(diff)<50){
+      panel.classList.add('win-equal');
+      document.getElementById('seuil-fill').style.background='var(--green)';
+      set('v-icon','🤝');
+      setH('v-title','<span style="color:var(--green)">Régimes équivalents</span>');
+      set('v-eco','Différence < 50 €/an');
+      setH('v-body',`Vos charges réelles (<span>${fmt(fraisA)}</span>) ≈ abattement forfaitaire (<span>${fmt(seuil)}</span>).<br>→ Restez sur le régime simplifié, c'est moins de paperasse pour le même résultat.`);
+      setH('seuil-note',`Vos charges (<span>${fmt(fraisA)}</span>) ≈ seuil (<span>${fmt(seuil)}</span>).`);
+    } else if(diff>0){
+      panel.classList.add('win-reel');
+      document.getElementById('seuil-fill').style.background='var(--blue)';
+      set('v-icon','✅');
+      setH('v-title','<span style="color:var(--blue)">Passe aux frais réels</span>');
+      set('v-eco',`Vous économisez ${fmt(diff)} / an`);
+      setH('v-body',`Vos charges (<span>${fmt(fraisA)}</span>) dépassent l'abattement (<span>${fmt(seuil)}</span>) de <span>+${fmt(fraisA-seuil)}</span>.<br>→ Les frais réels réduisent votre revenu imposable et vous économisent <span>${fmt(diff)}</span>/an.<br>⚠️ Comptabilité obligatoire en déclaration contrôlée.`);
+      setH('seuil-note',`Vos charges (<span>${fmt(fraisA)}</span>) dépassent le seuil de <span>${fmt(seuil)}</span> → frais réels avantageux.`);
+    } else {
+      panel.classList.add('win-bnc');
+      document.getElementById('seuil-fill').style.background='var(--acc)';
+      set('v-icon','✅');
+      setH('v-title','<span style="color:var(--acc)">Restez sur votre régime actuel</span>');
+      set('v-eco',`Vous économisez ${fmt(-diff)} / an`);
+      setH('v-body',`L'abattement forfaitaire (<span>${fmt(seuil)}</span>) est plus avantageux que vos charges réelles (<span>${fmt(fraisA)}</span>).<br>Il vous manque <span>${fmt(seuil-fraisA)}</span>/an de charges supplémentaires pour que les frais réels soient intéressants.`);
+      setH('seuil-note',`Il vous faudrait <span>${fmt(seuil-fraisA)}</span>/an de charges supplémentaires pour que les frais réels deviennent intéressants.`);
+    }
+  } else {
+    ['c-ca-b','c-ca-r','c-ded-b','c-ded-r','c-rni-b','c-rni-r','c-urs-b','c-urs-r',
+     'c-ir-b','c-ir-r','c-tmi-b','c-tmi-r','c-chg-b','c-chg-r','c-net-b','c-net-r','c-eco-b','c-eco-r']
+      .forEach(id=>set(id,'—'));
+    document.getElementById('verdict-panel').className='verdict-panel';
+    set('v-icon','💡');
+    setH('v-title','<span style="color:var(--muted)">Saisissez votre CA et vos charges</span>');
+    set('v-eco','');
+    set('v-body','Renseignez votre revenu et vos charges pro pour obtenir une recommandation.');
+    document.getElementById('seuil-wrap').style.display='none';
+    set('frais-tot','0 €');
+  }
+}
+
+// =====================
+//  TABS
+// =====================
+function showTab(name,btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'graphs') setTimeout(updateCharts, 50);
+}
+
+// =====================
+//  SAUVEGARDE
+// =====================
+let dirty=false;
+function markDirty(){
+  dirty=true;
+  set('save-status','💾 Non sauvegardé');
+  const b=document.getElementById('save-btn');
+  b.classList.remove('ok'); b.textContent='Sauvegarder';
+}
+function saveData(){
+  const data={
+    regime:currentRegime, periode,
+    ca:document.getElementById('ca').value,
+    ca2:undefined,
+    customCharges:document.getElementById('r-charges').value,
+    customAbat:document.getElementById('r-abat').value,
+    fraisLines: fraisLines,
+    fraisIdCounter: fraisIdCounter,
+  };
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    dirty=false;
+    const b=document.getElementById('save-btn');
+    b.textContent='✓ Sauvegardé'; b.classList.add('ok');
+    const ts=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    setH('save-status',`✅ Sauvegardé à <b>${ts}</b>`);
+    setTimeout(()=>{if(!dirty){b.textContent='Sauvegarder';b.classList.remove('ok');}},3000);
+  }catch(e){alert('Stockage local non disponible.');}
+}
+function clearData(){
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById('ca').value='';
+  document.querySelectorAll('.frais-inp').forEach(i=>i.value='');
+  sharedCaM=0;
+  calc();calcCmp();
+  set('save-status','💾 Données effacées');
+}
+function loadData(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw)return;
+    const data=JSON.parse(raw);
+    if(data.ca)  document.getElementById('ca').value=data.ca;
+    // ca2 supprimé — CA partagé depuis onglet 1
+    if(data.customCharges) document.getElementById('r-charges').value=data.customCharges;
+    if(data.customAbat)    document.getElementById('r-abat').value=data.customAbat;
+    if(data.periode){
+      periode=data.periode;
+      document.querySelectorAll('.tog .tog-btn').forEach(b=>{
+        const p=b.getAttribute('onclick').match(/'([mta])'/)[1];
+        b.classList.toggle('active',p===periode);
+      });
+    }
+    if(data.regime){
+      const regime = REGIMES[data.regime] ? data.regime : 'bnc'; // fallback si régime inconnu
+      const btn=document.querySelector(`.regime-btn[data-regime="${regime}"]`);
+      if(btn){setRegime(btn);}
+    }
+    if(data.fraisLines && data.fraisLines.length > 0) {
+      fraisLines = data.fraisLines;
+      fraisIdCounter = data.fraisIdCounter || fraisLines.length;
+      renderFraisList();
+    }
+    const ts=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    setH('save-status',`✅ Chargé — sauvegardé le <b>${ts}</b>`);
+    calc();calcCmp();
+  }catch(e){}
+}
+function exportPDF(){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='block');
+  const prev=document.title;
+  const ca=document.getElementById('ca').value||'0';
+  document.title=`Fiscal_${REGIMES[currentRegime].label.replace(/\s/,'_')}_${ca}€_${new Date().toLocaleDateString('fr-FR').replace(/\//g,'-')}`;
+  window.print();
+  setTimeout(()=>{
+    document.title=prev;
+    document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='');
+    document.querySelectorAll('.tab-panel.active').forEach(p=>p.style.display='block');
+  },500);
+}
+
+// =====================
+//  THÈME
+// =====================
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const sys   = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  const theme = saved || sys; // toujours explicite
+  document.documentElement.dataset.theme = theme;
+  updateThemeBtn();
+}
+
+function toggleTheme() {
+  const current = document.documentElement.dataset.theme || 'dark';
+  const next    = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn();
+}
+
+function updateThemeBtn() {
+  const theme = document.documentElement.dataset.theme || 'dark';
+  const btn   = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+// =====================
+//  GRAPHIQUES
+// =====================
+let chartMontants = null, chartPct = null, chartTaux = null;
+const SERIES_ACTIVE = { charges:true, ir:true, total:true, net:true };
+
+// Lire les couleurs directement depuis les variables CSS — cohérence totale avec le thème
+function getCSSColor(varName) {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+}
+
+function getSerieColors() {
+  return {
+    charges: { line: getCSSColor('--orange'), fill: getCSSColor('--orange').replace(')', ', .15)').replace('rgb', 'rgba') },
+    ir:      { line: getCSSColor('--blue'),   fill: getCSSColor('--blue').replace(')', ', .12)').replace('rgb', 'rgba') },
+    total:   { line: getCSSColor('--red'),    fill: getCSSColor('--red').replace(')', ', .10)').replace('rgb', 'rgba') },
+    net:     { line: getCSSColor('--green'),  fill: getCSSColor('--green').replace(')', ', .12)').replace('rgb', 'rgba') },
+    taux:    { line: getCSSColor('--acc'),    fill: getCSSColor('--acc').replace(')', ', .12)').replace('rgb', 'rgba') },
+  };
+}
+
+// Fallback simple si CSS var retourne hex
+function hexToRgba(hex, a) {
+  if (!hex || hex.startsWith('rgba') || hex.startsWith('rgb')) return hex;
+  const r = parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// Couleurs fixes cohérentes avec le thème (ne changent pas selon dark/light — juste l'intensité)
+const CHART_COLORS = {
+  charges: { line:'var(--orange)', hex:'#ffaa40', alpha:.15 },
+  ir:      { line:'var(--blue)',   hex:'#50d0ff', alpha:.12 },
+  total:   { line:'var(--red)',    hex:'#ff6060', alpha:.10 },
+  net:     { line:'var(--green)',  hex:'#50f0a0', alpha:.12 },
+  taux:    { line:'var(--acc)',    hex:'#a080ff', alpha:.12 },
+};
+
+function toggleSerie(btn) {
+  const s = btn.dataset.serie;
+  SERIES_ACTIVE[s] = !SERIES_ACTIVE[s];
+  btn.classList.toggle('active', SERIES_ACTIVE[s]);
+  updateCharts();
+}
+
+function getThemeColors() {
+  const dark = (document.documentElement.dataset.theme || 'dark') === 'dark';
+  return {
+    grid:    dark ? 'rgba(255,255,255,.07)' : 'rgba(30,40,80,.09)',
+    tick:    dark ? 'rgba(240,240,250,.35)' : 'rgba(26,26,40,.40)',
+    tooltip: dark ? 'rgba(8,8,20,.92)'      : 'rgba(240,245,255,.95)',
+    ttBorder:dark ? 'rgba(255,255,255,.14)' : 'rgba(50,70,140,.18)',
+    ttTitle: dark ? '#f0f0fa'               : '#1a1a28',
+    ttBody:  dark ? 'rgba(240,240,250,.55)' : 'rgba(26,26,40,.55)',
+  };
+}
+
+function buildPoints() {
+  const min  = Math.max(0, parseFloat(document.getElementById('g-min').value) || 0);
+  const max  = Math.max(min + 500, parseFloat(document.getElementById('g-max').value) || 10000);
+  const N    = 50;
+  const step = (max - min) / N;
+  const labels=[],dC=[],dI=[],dT=[],dN=[],dTaux=[];
+  for (let i=0; i<=N; i++) {
+    const ca  = min + i * step;
+    const caA = ca * 12;
+    const chM = caA * CHARGES / 12;
+    const irM = calcIR(caA * (1-ABAT)) / 12;
+    const tot = chM + irM;
+    const net = ca - tot;
+    labels.push(+ca.toFixed(0));
+    dC.push(+chM.toFixed(2)); dI.push(+irM.toFixed(2));
+    dT.push(+tot.toFixed(2)); dN.push(+net.toFixed(2));
+    dTaux.push(ca>0 ? +(tot/ca*100).toFixed(2) : 0);
+  }
+  return { labels, dC, dI, dT, dN, dTaux };
+}
+
+function baseOpts(tc, yLabel='€') {
+  const isPct = yLabel === '%';
+  return {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{ mode:'index', intersect:false },
+    animation:{ duration:400, easing:'easeInOutQuart' },
+    plugins:{
+      legend:{ display:false }, // légende gérée manuellement via les boutons
+      tooltip:{
+        backgroundColor: tc.tooltip,
+        borderColor: tc.ttBorder,
+        borderWidth: 1,
+        titleColor: tc.ttTitle,
+        bodyColor:  tc.ttBody,
+        titleFont:{ family:'DM Mono, monospace', size:11, weight:'600' },
+        bodyFont:{ family:'DM Mono, monospace', size:11 },
+        padding:14,
+        cornerRadius:10,
+        callbacks:{
+          title: items => items[0].label.toLocaleString('fr-FR') + ' €/mois',
+          label: ctx => {
+            const v = ctx.parsed.y;
+            return `  ${ctx.dataset.label} : ${isPct ? v.toFixed(1)+'%' : v.toLocaleString('fr-FR')+' €'}`;
+          }
+        }
+      }
+    },
+    scales:{
+      x:{
+        grid:{ color: tc.grid, drawBorder:false },
+        ticks:{ color:tc.tick, font:{ family:'DM Mono, monospace', size:10 }, maxTicksLimit:8,
+          callback: v => Number(v).toLocaleString('fr-FR')+'€' },
+        title:{ display:true, text:'Revenu mensuel brut (€)', color:tc.tick,
+          font:{ family:'DM Mono, monospace', size:10 }, padding:{ top:8 } }
+      },
+      y:{
+        grid:{ color: tc.grid, drawBorder:false },
+        ticks:{ color:tc.tick, font:{ family:'DM Mono, monospace', size:10 },
+          callback: v => isPct ? v+'%' : v.toLocaleString('fr-FR')+'€' },
+        title:{ display:true,
+          text: isPct ? 'Part du CA (%)' : 'Montant mensuel (€)',
+          color:tc.tick, font:{ family:'DM Mono, monospace', size:10 }, padding:{ bottom:6 } }
+      }
+    }
+  };
+}
+
+function makeLine(label, data, key, dash=false) {
+  const c = CHART_COLORS[key];
+  return {
+    label, data,
+    borderColor: hexToRgba(c.hex, 1),
+    backgroundColor: hexToRgba(c.hex, c.alpha),
+    borderWidth:2.5, tension:.4, fill:true,
+    pointRadius:0, pointHoverRadius:6,
+    pointHoverBackgroundColor: hexToRgba(c.hex, 1),
+    ...(dash ? { borderDash:[5,4] } : {}),
+  };
+}
+
+function makeCAMarker(labels, maxVal) {
+  if (!sharedCaM || sharedCaM <= 0) return null;
+  const caIdx = labels.findIndex(v => v >= sharedCaM);
+  if (caIdx < 0) return null;
+  const data = labels.map((_,i) => i === caIdx ? maxVal : null);
+  return {
+    label: 'Votre CA', data,
+    borderColor: 'rgba(255,255,255,.5)',
+    backgroundColor: 'transparent',
+    borderWidth:1.5, borderDash:[3,3],
+    pointRadius:0, fill:false, tension:0, spanGaps:false,
+  };
+}
+
+function updateCharts() {
+  const d  = buildPoints();
+  const tc = getThemeColors();
+
+  if (chartMontants) { chartMontants.destroy(); chartMontants=null; }
+  if (chartPct)      { chartPct.destroy();      chartPct=null; }
+  if (chartTaux)     { chartTaux.destroy();      chartTaux=null; }
+
+  // ── Mise à jour dots de légende avec les vraies couleurs ──
+  const dotMap = { charges:'--orange', ir:'--blue', total:'--red', net:'--green' };
+  Object.entries(dotMap).forEach(([k,v]) => {
+    const dot = document.getElementById('dot-'+k);
+    if (dot) dot.style.background = getCSSColor(v) || CHART_COLORS[k].hex;
+  });
+
+  // ── Graphique 1 : montants ──
+  const dsM = [];
+  if(SERIES_ACTIVE.charges) dsM.push(makeLine('Charges sociales', d.dC, 'charges'));
+  if(SERIES_ACTIVE.ir)      dsM.push(makeLine('IR mensuel',        d.dI, 'ir'));
+  if(SERIES_ACTIVE.total)   dsM.push(makeLine('Total prélevé',     d.dT, 'total', true));
+  if(SERIES_ACTIVE.net)     dsM.push(makeLine('Net disponible',    d.dN, 'net'));
+  const mMax = Math.max(...d.dN, ...d.dT, 1);
+  const mMarker = makeCAMarker(d.labels, mMax * 1.02);
+  if (mMarker) dsM.push(mMarker);
+
+  chartMontants = new Chart(document.getElementById('chart-montants').getContext('2d'), {
+    type:'line', data:{ labels:d.labels, datasets:dsM }, options: baseOpts(tc, '€'),
+  });
+
+  // ── Graphique 2 : taux effectif ──
+  const dsTaux = [ makeLine('Taux effectif (charges + IR)', d.dTaux, 'taux') ];
+  const tMarker = makeCAMarker(d.labels, 65);
+  if (tMarker) dsTaux.push(tMarker);
+  const optTaux = { ...baseOpts(tc,'%'), scales:{
+    x: baseOpts(tc,'%').scales.x,
+    y: { ...baseOpts(tc,'%').scales.y, min:0, suggestedMax:60 }
+  }};
+  chartTaux = new Chart(document.getElementById('chart-taux').getContext('2d'), {
+    type:'line', data:{ labels:d.labels, datasets:dsTaux }, options: optTaux,
+  });
+
+  // ── Graphique 3 : % du CA ──
+  const dCp = d.dC.map((v,i) => d.labels[i]>0 ? +(v/d.labels[i]*100).toFixed(2) : 0);
+  const dIp = d.dI.map((v,i) => d.labels[i]>0 ? +(v/d.labels[i]*100).toFixed(2) : 0);
+  const dTp = d.dT.map((v,i) => d.labels[i]>0 ? +(v/d.labels[i]*100).toFixed(2) : 0);
+  const dNp = d.dN.map((v,i) => d.labels[i]>0 ? +(v/d.labels[i]*100).toFixed(2) : 0);
+  const dsP = [];
+  if(SERIES_ACTIVE.charges) dsP.push(makeLine('Charges %', dCp, 'charges'));
+  if(SERIES_ACTIVE.ir)      dsP.push(makeLine('IR %',      dIp, 'ir'));
+  if(SERIES_ACTIVE.net)     dsP.push(makeLine('Net %',     dNp, 'net'));
+  const pMarker = makeCAMarker(d.labels, 105);
+  if (pMarker) dsP.push(pMarker);
+  const optPct = { ...baseOpts(tc,'%'), scales:{
+    x: baseOpts(tc,'%').scales.x,
+    y: { ...baseOpts(tc,'%').scales.y, min:0, max:105 }
+  }};
+  chartPct = new Chart(document.getElementById('chart-pct').getContext('2d'), {
+    type:'line', data:{ labels:d.labels, datasets:dsP }, options: optPct,
+  });
+
+  // ── Mise à jour des labels contextuels ──
+  const rl = document.getElementById('g-regime-lbl');
+  if (rl) rl.textContent = REGIMES[currentRegime]?.label || '—';
+  const gl = document.getElementById('g-ca-lbl');
+  if (gl) gl.textContent = sharedCaM > 0 ? fmt(sharedCaM)+'/mois' : 'non renseigné';
+
+  // Taux effectif au CA actuel
+  if (sharedCaM > 0) {
+    const caA = sharedCaM*12, chM=caA*CHARGES/12, irM=calcIR(caA*(1-ABAT))/12;
+    const teff = ((chM+irM)/sharedCaM*100).toFixed(1);
+    const chargesPct = (chM/sharedCaM*100).toFixed(1);
+    const el = document.getElementById('g-taux-eff');
+    if (el) el.textContent = teff+'%';
+    const ec = document.getElementById('g-charges-pct');
+    if (ec) ec.textContent = chargesPct+'%';
+  }
+
+  // ── Seuils clés ──
+  const seuilsList = document.getElementById('seuils-list');
+  if (seuilsList) {
+    // Seuil IR : revenu imposable = 11 294 € → CA = 11294 / (1-ABAT) / 12
+    const caSeuilIR = Math.round(11294 / (1-ABAT) / 12);
+    // Seuil 11→30% : 28 797 €
+    const caSeuil30 = Math.round(28797 / (1-ABAT) / 12);
+    const seuilHTML = [
+      { label:'Début de l\'IR', ca:caSeuilIR, color:'var(--blue)', desc:`En dessous de ${fmt(caSeuilIR)}/mois, votre revenu est non imposable.` },
+      { label:'Tranche 30%',    ca:caSeuil30, color:'var(--orange)', desc:`Au-delà de ${fmt(caSeuil30)}/mois, chaque euro supplémentaire est imposé à 30%.` },
+    ].map(s => `
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--glass-bg-deep);border-radius:9px;border:1px solid var(--brd);">
+        <div style="width:3px;border-radius:2px;background:${s.color};align-self:stretch;flex-shrink:0;"></div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:${s.color};margin-bottom:2px;">${s.label} — ${fmt(s.ca)}/mois</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.5;">${s.desc}</div>
+        </div>
+      </div>
+    `).join('');
+    seuilsList.innerHTML = seuilHTML;
+  }
+
+  // ── Insight % ──
+  const pctInsight = document.getElementById('pct-insight');
+  if (pctInsight && sharedCaM > 0) {
+    const caA=sharedCaM*12, chPct=(caA*CHARGES/12/sharedCaM*100).toFixed(1);
+    const irPct=(calcIR(caA*(1-ABAT))/12/sharedCaM*100).toFixed(1);
+    const netPct=(100-parseFloat(chPct)-parseFloat(irPct)).toFixed(1);
+    pctInsight.innerHTML = `À votre CA de <b style="color:var(--acc)">${fmt(sharedCaM)}/mois</b> : <b style="color:var(--orange)">${chPct}%</b> en charges, <b style="color:var(--blue)">${irPct}%</b> en IR, <b style="color:var(--green)">${netPct}%</b> en net.`;
+  } else if (pctInsight) {
+    pctInsight.innerHTML = 'Saisissez votre CA dans l\'onglet Calcul pour voir votre position sur ces graphiques.';
+  }
+
+  // ── Table de référence ──
+  const rMin = d.labels[0], rMax = d.labels[d.labels.length-1];
+  const rStep = Math.max(Math.round((rMax-rMin)/12/100)*100, 100);
+  let rows = '';
+  for (let ca=rMin; ca<=rMax+1; ca+=rStep) {
+    const caA=ca*12, chM=caA*CHARGES/12, irM=calcIR(caA*(1-ABAT))/12;
+    const tot=chM+irM, net=ca-tot;
+    const taux = ca>0 ? (tot/ca*100).toFixed(1) : '0.0';
+    const tmiObj = getTMI(caA*(1-ABAT));
+    const isActive = sharedCaM > 0 && Math.abs(ca - sharedCaM) < rStep/2;
+    rows += `<tr style="${isActive ? 'background:rgba(160,128,255,.08);border-left:2px solid var(--acc);' : ''}">
+      <td style="${isActive ? 'color:var(--acc);font-weight:600;' : ''}">${Math.round(ca).toLocaleString('fr-FR')} €${isActive ? ' ◀' : ''}</td>
+      <td class="col-charges">${Math.round(chM).toLocaleString('fr-FR')} €</td>
+      <td class="col-ir">${Math.round(irM).toLocaleString('fr-FR')} €</td>
+      <td class="col-total">${Math.round(tot).toLocaleString('fr-FR')} €</td>
+      <td class="col-net">${Math.round(net).toLocaleString('fr-FR')} €</td>
+      <td class="col-taux">${taux} %</td>
+      <td style="color:var(--muted);text-align:center;">${Math.round(tmiObj.taux*100)}%</td>
+    </tr>`;
+  }
+  document.getElementById('ref-tbody').innerHTML = rows;
+}
+
+// =====================
+//  HISTORIQUE
+// =====================
+let historyEntries = [];
+let histSort = 'date';
+let pdfTargetEntry = null;
+let chartHistory = null;
+let chartPrintInstance = null;
+
+function histNextId() { return Date.now()+Math.random().toString(36).slice(2,6); }
+
+function computeFromCA(caM) {
+  const caA  = caM * 12;
+  const chM  = caA * CHARGES / 12;                  // flottant exact
+  const irM  = calcIR(caA * (1 - ABAT)) / 12;       // flottant exact
+  const tot  = chM + irM;
+  const net  = caM - tot;
+  const taux = caM > 0 ? +((tot / caM) * 100).toFixed(2) : 0;
+  return {
+    charges : +chM.toFixed(2),
+    ir      : +irM.toFixed(2),
+    net     : +net.toFixed(2),
+    total   : +tot.toFixed(2),
+    taux,
+    // Versions arrondies pour l'affichage seulement
+    chargesR: Math.round(chM),
+    irR     : Math.round(irM),
+    netR    : Math.round(net),
+    totalR  : Math.round(tot),
+  };
+}
+
+function addHistoryManual() {
+  const date   = document.getElementById('h-date').value;
+  const label  = document.getElementById('h-label').value.trim() || 'Sans titre';
+  const caM    = parseFloat(document.getElementById('h-ca').value) || 0;
+  const note   = document.getElementById('h-note').value.trim();
+  if (!date) { alert('Veuillez sélectionner un mois.'); return; }
+  if (!caM)  { alert('Veuillez saisir un CA.'); return; }
+
+  const auto    = computeFromCA(caM);
+  // Priorité au champ manuel, sinon valeur calculée exacte (float)
+  const charges = parseFloat(document.getElementById('h-charges').value) || auto.charges;
+  const ir      = parseFloat(document.getElementById('h-ir').value)      || auto.ir;
+  const total   = charges + ir;
+  const net     = caM - total;
+  const taux    = caM > 0 ? +((total / caM) * 100).toFixed(2) : 0;
+
+  historyEntries.push({
+    id:histNextId(), date, label, caM,
+    charges, ir, net, total, taux,
+    regime: REGIMES[currentRegime]?.label || '—', note
+  });
+  historyEntries.sort((a,b) => a.date.localeCompare(b.date));
+  ['h-date','h-label','h-ca','h-charges','h-ir','h-note'].forEach(id => document.getElementById(id).value='');
+  saveHistoryToStorage(); renderHistory(); markDirty();
+}
+
+function addHistoryFromCurrent() {
+  if (!sharedCaM) { alert('Aucun CA saisi dans l\'onglet Calcul fiscal.'); return; }
+  const date = new Date().toISOString().slice(0,7);
+  const auto = computeFromCA(sharedCaM);
+  historyEntries.push({
+    id:histNextId(), date,
+    label: REGIMES[currentRegime]?.label || 'Auto',
+    caM: sharedCaM,
+    charges: auto.charges, ir: auto.ir, net: auto.net,
+    total: auto.total, taux: auto.taux,
+    regime: REGIMES[currentRegime]?.label || '—',
+    note: 'Capturé automatiquement'
+  });
+  historyEntries.sort((a,b) => a.date.localeCompare(b.date));
+  saveHistoryToStorage(); renderHistory(); markDirty();
+}
+
+function deleteHistoryEntry(id) {
+  historyEntries = historyEntries.filter(e => e.id !== id);
+  saveHistoryToStorage(); renderHistory(); markDirty();
+}
+
+function setHistSort(s, btn) {
+  // Si on reclique sur le même critère → inverse la direction
+  if (histSort === s) {
+    toggleHistDir();
+    return;
+  }
+  histSort = s;
+  document.querySelectorAll('.hist-sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory();
+}
+
+let histDir = 'desc'; // 'asc' ou 'desc'
+
+function toggleHistDir() {
+  histDir = histDir === 'desc' ? 'asc' : 'desc';
+  const btn = document.getElementById('hist-dir-btn');
+  if (btn) {
+    btn.textContent = histDir === 'asc' ? '↑ Asc' : '↓ Desc';
+    btn.classList.toggle('asc', histDir === 'asc');
+  }
+  renderHistory();
+}
+
+function formatMonth(ym) {
+  const [y,m]=ym.split('-');
+  return ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][parseInt(m)-1]+' '+y;
+}
+
+let histYearFilter = 'all';
+
+function renderHistory() {
+  const allYears = [...new Set(historyEntries.map(e => e.date.slice(0,4)))].sort().reverse();
+
+  // Filtre année — pills visibles seulement si plusieurs années
+  const filterEl = document.getElementById('hist-year-filter');
+  if (filterEl) {
+    if (allYears.length <= 1) {
+      filterEl.style.display = 'none';
+    } else {
+      filterEl.style.display = 'flex';
+      filterEl.innerHTML = [
+        `<button class="hist-year-pill${histYearFilter==='all'?' active':''}" onclick="setYearFilter('all',this)">Toutes</button>`,
+        ...allYears.map(y =>
+          `<button class="hist-year-pill${histYearFilter===y?' active':''}" onclick="setYearFilter('${y}',this)">${y}</button>`
+        )
+      ].join('');
+    }
+  }
+
+  // Filtrage par année
+  const pool = histYearFilter === 'all'
+    ? [...historyEntries]
+    : historyEntries.filter(e => e.date.startsWith(histYearFilter));
+
+  if (!pool.length) {
+    document.getElementById('hist-list').innerHTML = '<div style="text-align:center;padding:30px;font-family:\'DM Mono\',monospace;font-size:11px;color:var(--muted);">Aucune entrée pour cette période.</div>';
+    document.getElementById('hist-summary').innerHTML = 'Aucune entrée pour le moment.';
+    renderHistoryChart([]);
+    return;
+  }
+
+  // Résumé (sur toutes les entrées)
+  const avgCA  = Math.round(historyEntries.reduce((s,e)=>s+e.caM,0)/historyEntries.length);
+  const avgNet = Math.round(historyEntries.reduce((s,e)=>s+e.net,0)/historyEntries.length);
+  document.getElementById('hist-summary').innerHTML = `
+    Total : <span style="color:var(--text)">${historyEntries.length} entrées</span> · <span style="color:var(--acc)">${allYears.length} an${allYears.length>1?'s':''}</span><br>
+    CA moyen : <span style="color:var(--orange)">${fmt(avgCA)}/mois</span><br>
+    Net moyen : <span style="color:var(--green)">${fmt(avgNet)}/mois</span><br>
+    Années : <span style="color:var(--text-dim)">${allYears.slice().reverse().join(' · ')}</span>
+  `;
+
+  // Comparateur de tri
+  const cmpFn = (a, b) => {
+    const v = histSort === 'date'
+      ? a.date.localeCompare(b.date)
+      : (Number(a[histSort]) || 0) - (Number(b[histSort]) || 0);
+    return histDir === 'asc' ? v : -v;
+  };
+
+  let html = '';
+
+  if (histSort === 'date') {
+    // ── Groupé par année (ordre des années : toujours récent → ancien) ──
+    const byYear = {};
+    pool.forEach(e => {
+      const y = e.date.slice(0,4);
+      if (!byYear[y]) byYear[y] = [];
+      byYear[y].push(e);
+    });
+    const yearKeys = Object.keys(byYear).sort().reverse();
+
+    for (const year of yearKeys) {
+      const entries = byYear[year].sort(cmpFn);
+      const totCA   = entries.reduce((s,e)=>s+e.caM,  0);
+      const totNet  = entries.reduce((s,e)=>s+e.net,   0);
+      const totPrel = entries.reduce((s,e)=>s+e.total, 0);
+
+      html += `
+      <div class="hist-year-sep">
+        <span class="hist-year-label">${year}</span>
+        <div class="hist-year-line"></div>
+        <div class="hist-year-summary">
+          <span>${entries.length} mois</span>
+          <span>CA <b>${fmt(totCA)}</b></span>
+          <span>Net <b style="color:var(--green)">${fmt(totNet)}</b></span>
+          <span>Prélevé <b style="color:var(--red)">${fmt(totPrel)}</b></span>
+          <button onclick="openAnnualModalForYear('${year}')" style="background:rgba(80,240,160,.1);border:1px solid rgba(80,240,160,.25);border-radius:14px;padding:2px 10px;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);cursor:pointer;">📋 Bilan ${year}</button>
+        </div>
+      </div>`;
+      html += entries.map(e => entryHTML(e, false)).join('');
+    }
+
+  } else {
+    // ── Liste plate triée par champ — l'année s'affiche comme badge ──
+    const sorted = pool.slice().sort(cmpFn);
+    html = sorted.map(e => entryHTML(e, true)).join('');
+  }
+
+  document.getElementById('hist-list').innerHTML = html || '<div style="text-align:center;padding:20px;font-family:\'DM Mono\',monospace;font-size:11px;color:var(--muted);">Aucune entrée.</div>';
+  renderHistoryChart([...historyEntries].sort((a,b)=>a.date.localeCompare(b.date)));
+}
+
+function entryHTML(e, showYearBadge) {
+  return `
+  <div class="hist-entry">
+    <div class="hist-entry-top">
+      <span class="hist-entry-date">${formatMonth(e.date)}</span>
+      ${showYearBadge ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:8px;padding:2px 8px;">${e.date.slice(0,4)}</span>` : ''}
+      <span class="hist-entry-label">${e.label}</span>
+      ${e.note ? `<span class="hist-entry-note">"${e.note}"</span>` : ''}
+      <div class="hist-entry-actions">
+        <button class="hist-action-btn" onclick="openPdfModal('${e.id}')">🖨️ PDF</button>
+        <button class="hist-action-btn hist-del-btn" onclick="deleteHistoryEntry('${e.id}')">✕</button>
+      </div>
+    </div>
+    <div class="hist-entry-vals">
+      <div class="hist-val"><div class="hist-val-lbl">CA</div><div class="hist-val-v" style="color:var(--text)">${fmt(e.caM)}</div></div>
+      <div class="hist-val"><div class="hist-val-lbl">Charges</div><div class="hist-val-v" style="color:var(--orange)">${fmt(e.charges)}</div></div>
+      <div class="hist-val"><div class="hist-val-lbl">IR</div><div class="hist-val-v" style="color:var(--blue)">${fmt(e.ir)}</div></div>
+      <div class="hist-val"><div class="hist-val-lbl">Total prélevé</div><div class="hist-val-v" style="color:var(--red)">${fmt(e.total)}</div></div>
+      <div class="hist-val"><div class="hist-val-lbl">Net</div><div class="hist-val-v" style="color:var(--green)">${fmt(e.net)}</div></div>
+      <div class="hist-val"><div class="hist-val-lbl">Taux</div><div class="hist-val-v" style="color:var(--acc)">${e.taux}%</div></div>
+      <div class="hist-val"><div class="hist-val-lbl">Régime</div><div class="hist-val-v" style="color:var(--muted);font-size:10px;">${e.regime}</div></div>
+    </div>
+  </div>`;
+}
+
+function setYearFilter(year, btn) {
+  histYearFilter = year;
+  document.querySelectorAll('.hist-year-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderHistory();
+}
+
+
+
+function getAvailableYears() {
+  return [...new Set(historyEntries.map(e => e.date.slice(0,4)))].sort().reverse();
+}
+
+function openAnnualModal() {
+  const years = getAvailableYears();
+  if (!years.length) { alert('Aucune entrée dans l\'historique.'); return; }
+  annualTargetYear = years[0];
+  renderAnnualYearList(years);
+  document.getElementById('annual-modal').style.display = 'flex';
+}
+
+function openAnnualModalForYear(year) {
+  annualTargetYear = year;
+  const years = getAvailableYears();
+  renderAnnualYearList(years);
+  document.getElementById('annual-modal').style.display = 'flex';
+}
+
+function renderAnnualYearList(years) {
+  document.getElementById('annual-year-list').innerHTML = years.map(y => {
+    const entries = historyEntries.filter(e => e.date.startsWith(y));
+    const totCA  = entries.reduce((s,e) => s+e.caM, 0);
+    const totNet = entries.reduce((s,e) => s+e.net, 0);
+    const sel    = y === annualTargetYear ? 'selected' : '';
+    return `
+    <div class="annual-year-option ${sel}" onclick="selectAnnualYear('${y}',this)">
+      <span class="ayo-year">${y}</span>
+      <div class="ayo-stats">
+        <span>${entries.length} mois · CA <b>${fmt(totCA)}</b> · Net <b style="color:var(--green)">${fmt(totNet)}</b></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectAnnualYear(y, el) {
+  annualTargetYear = y;
+  document.querySelectorAll('.annual-year-option').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function closeAnnualModal() {
+  document.getElementById('annual-modal').style.display = 'none';
+}
+
+function confirmAnnualExport() {
+  if (!annualTargetYear) return;
+  const year    = annualTargetYear;
+  const entries = [...historyEntries]
+    .filter(e => e.date.startsWith(year))
+    .sort((a,b) => a.date.localeCompare(b.date));
+  if (!entries.length) { alert('Aucune entrée pour cette année.'); return; }
+
+  const withMensuel = document.getElementById('ao-mensuel').checked;
+  const withChart   = document.getElementById('ao-chart').checked;
+  const withNotes   = document.getElementById('ao-notes').checked;
+
+  const totCA     = entries.reduce((s,e) => s+e.caM,     0);
+  const totCh     = entries.reduce((s,e) => s+e.charges, 0);
+  const totIR     = entries.reduce((s,e) => s+e.ir,      0);
+  const totPrel   = entries.reduce((s,e) => s+e.total,   0);
+  const totNet    = entries.reduce((s,e) => s+e.net,      0);
+  const tauxMoy   = totCA > 0 ? (totPrel/totCA*100).toFixed(1) : '0';
+  const moisCnt   = entries.length;
+
+  // KPIs
+  const kpis = [
+    { lbl:'CA total',        val:fmt(totCA),   color:'#1a1a2e' },
+    { lbl:'Charges totales', val:fmt(totCh),   color:'#b86400' },
+    { lbl:'IR total estimé', val:fmt(totIR),   color:'#0082aa' },
+    { lbl:'Total prélevé',   val:fmt(totPrel), color:'#c0392b' },
+    { lbl:'Net disponible',  val:fmt(totNet),  color:'#1a8c5b' },
+    { lbl:'Taux effectif moy.',val:tauxMoy+'%',color:'#5b4ecf' },
+  ];
+
+  // Tableau mensuel
+  const tableRows = entries.map(e => `
+    <tr>
+      <td>${formatMonth(e.date)}</td>
+      <td style="text-align:right">${fmt(e.caM)}</td>
+      <td style="text-align:right;color:#b86400">${fmt(e.charges)}</td>
+      <td style="text-align:right;color:#0082aa">${fmt(e.ir)}</td>
+      <td style="text-align:right;color:#c0392b">${fmt(e.total)}</td>
+      <td style="text-align:right;color:#1a8c5b">${fmt(e.net)}</td>
+      <td style="text-align:right;color:#555">${e.taux}%</td>
+      ${withNotes ? `<td style="color:#777;font-size:10px">${e.note||'—'}</td>` : ''}
+    </tr>`).join('');
+
+  const totalRow = `
+    <tr class="apz-total">
+      <td><b>Total ${year}</b></td>
+      <td style="text-align:right"><b>${fmt(totCA)}</b></td>
+      <td style="text-align:right;color:#b86400"><b>${fmt(totCh)}</b></td>
+      <td style="text-align:right;color:#0082aa"><b>${fmt(totIR)}</b></td>
+      <td style="text-align:right;color:#c0392b"><b>${fmt(totPrel)}</b></td>
+      <td style="text-align:right;color:#1a8c5b"><b>${fmt(totNet)}</b></td>
+      <td style="text-align:right;color:#555"><b>${tauxMoy}%</b></td>
+      ${withNotes ? '<td></td>' : ''}
+    </tr>`;
+
+  // Construire le HTML d'impression
+  let html = `
+    <div class="apz-title">Bilan fiscal ${year}</div>
+    <div class="apz-sub">${moisCnt} mois · Exporté le ${new Date().toLocaleDateString('fr-FR')} · Calcul indicatif</div>
+    <div class="apz-kpi-grid">
+      ${kpis.map(k => `<div class="apz-kpi"><div class="apz-kpi-lbl">${k.lbl}</div><div class="apz-kpi-val" style="color:${k.color}">${k.val}</div></div>`).join('')}
+    </div>
+  `;
+
+  if (withMensuel) {
+    html += `
+    <table class="apz-table">
+      <thead><tr>
+        <th>Mois</th><th style="text-align:right">CA</th><th style="text-align:right">Charges</th>
+        <th style="text-align:right">IR</th><th style="text-align:right">Prélevé</th>
+        <th style="text-align:right">Net</th><th style="text-align:right">Taux</th>
+        ${withNotes ? '<th>Note</th>' : ''}
+      </tr></thead>
+      <tbody>${tableRows}${totalRow}</tbody>
+    </table>`;
+  }
+
+  document.getElementById('apz-content').innerHTML = html;
+
+  // Graphique
+  const chartEl = document.getElementById('chart-annual-print');
+  chartEl.style.display = withChart ? 'block' : 'none';
+  if (chartAnnualPrint) { chartAnnualPrint.destroy(); chartAnnualPrint = null; }
+  if (withChart && entries.length) {
+    chartAnnualPrint = new Chart(chartEl.getContext('2d'), {
+      type:'bar',
+      data:{
+        labels: entries.map(e => formatMonth(e.date)),
+        datasets:[
+          { label:'Charges', data:entries.map(e=>e.charges), backgroundColor:'#b86400' },
+          { label:'IR',      data:entries.map(e=>e.ir),      backgroundColor:'#0082aa' },
+          { label:'Net',     data:entries.map(e=>e.net),     backgroundColor:'#1a8c5b' },
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, animation:false,
+        plugins:{ legend:{ display:true } },
+        scales:{ x:{ stacked:true }, y:{ stacked:true, ticks:{ callback:v=>v.toLocaleString('fr-FR')+'€' } } }
+      }
+    });
+  }
+
+  closeAnnualModal();
+  setTimeout(() => {
+    const t = document.title;
+    document.title = `Bilan_${year}`;
+    window.print();
+    document.title = t;
+    // Vider la zone après impression
+    setTimeout(() => {
+      document.getElementById('apz-content').innerHTML = '';
+      chartEl.style.display = 'none';
+    }, 500);
+  }, 150);
+}
+
+function renderHistoryChart(sorted) {
+  if (chartHistory) { chartHistory.destroy(); chartHistory=null; }
+  const ctx = document.getElementById('chart-history'); if(!ctx) return;
+  if (!sorted||!sorted.length) return;
+  const tc = getThemeColors();
+  chartHistory = new Chart(ctx.getContext('2d'), {
+    type:'line',
+    data:{ labels:sorted.map(e=>formatMonth(e.date)), datasets:[
+      { label:'CA', data:sorted.map(e=>e.caM), borderColor:'#e8e8f4', backgroundColor:'rgba(232,232,244,.07)', borderWidth:2, tension:.35, pointRadius:4, pointHoverRadius:7, fill:true },
+      { label:'Charges', data:sorted.map(e=>e.charges), borderColor:SERIE_COLORS.charges.line, backgroundColor:SERIE_COLORS.charges.fill, borderWidth:2, tension:.35, pointRadius:4, pointHoverRadius:7, fill:true },
+      { label:'IR', data:sorted.map(e=>e.ir), borderColor:SERIE_COLORS.ir.line, backgroundColor:SERIE_COLORS.ir.fill, borderWidth:2, tension:.35, pointRadius:4, pointHoverRadius:7, fill:true },
+      { label:'Net', data:sorted.map(e=>e.net), borderColor:SERIE_COLORS.net.line, backgroundColor:SERIE_COLORS.net.fill, borderWidth:2, tension:.35, pointRadius:4, pointHoverRadius:7, fill:true },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ display:true, position:'top', labels:{ color:tc.tick, font:{family:'DM Mono, monospace',size:10}, boxWidth:10, padding:10 } },
+        tooltip:{ backgroundColor:'rgba(13,13,17,.95)', borderColor:'rgba(139,124,248,.3)', borderWidth:1, titleColor:'#e8e8f4', bodyColor:'#9a9ab8', titleFont:{family:'DM Mono, monospace',size:11}, bodyFont:{family:'DM Mono, monospace',size:11}, padding:10, callbacks:{ label: ctx=>`  ${ctx.dataset.label} : ${ctx.parsed.y.toLocaleString('fr-FR')} €` } }
+      },
+      scales:{
+        x:{ grid:{color:tc.grid}, ticks:{color:tc.tick,font:{family:'DM Mono, monospace',size:10}}, title:{display:true,text:'Période',color:tc.tick,font:{family:'DM Mono, monospace',size:10}} },
+        y:{ grid:{color:tc.grid}, ticks:{color:tc.tick,font:{family:'DM Mono, monospace',size:10},callback:v=>v.toLocaleString('fr-FR')+'€'}, title:{display:true,text:'Montant mensuel (€)',color:tc.tick,font:{family:'DM Mono, monospace',size:10}} }
+      }
+    }
+  });
+}
+
+// PDF par point
+function openPdfModal(id) {
+  pdfTargetEntry = historyEntries.find(e=>e.id===id);
+  if(!pdfTargetEntry) return;
+  document.getElementById('pdf-modal-sub').textContent=`Relevé du ${formatMonth(pdfTargetEntry.date)} — ${pdfTargetEntry.label}`;
+  document.getElementById('pdf-modal').style.display='flex';
+}
+function closePdfModal() { document.getElementById('pdf-modal').style.display='none'; pdfTargetEntry=null; }
+
+function confirmPdfExport() {
+  if(!pdfTargetEntry) return;
+  const e=pdfTargetEntry;
+  const o={ ca:document.getElementById('po-ca').checked, charges:document.getElementById('po-charges').checked, ir:document.getElementById('po-ir').checked, net:document.getElementById('po-net').checked, total:document.getElementById('po-total').checked, taux:document.getElementById('po-taux').checked, chart:document.getElementById('po-chart').checked, note:document.getElementById('po-note').checked };
+
+  const blocks=[];
+  if(o.ca)      blocks.push({lbl:'CA mensuel',       val:fmt(e.caM),     color:'#1a1a2e'});
+  if(o.charges) blocks.push({lbl:'Charges sociales', val:fmt(e.charges), color:'#b86400'});
+  if(o.ir)      blocks.push({lbl:'IR estimé',        val:fmt(e.ir),      color:'#0082aa'});
+  if(o.total)   blocks.push({lbl:'Total prélevé',    val:fmt(e.total),   color:'#c0392b'});
+  if(o.net)     blocks.push({lbl:'Net disponible',   val:fmt(e.net),     color:'#1a8c5b'});
+  if(o.taux)    blocks.push({lbl:'Taux effectif',    val:e.taux+'%',     color:'#5b4ecf'});
+
+  document.getElementById('hpz-title').textContent=`Relevé — ${formatMonth(e.date)}`;
+  document.getElementById('hpz-meta').innerHTML=`${e.label} · Régime : ${e.regime}${o.note&&e.note?` · "${e.note}"`:''}  · Exporté le ${new Date().toLocaleDateString('fr-FR')}`;
+  document.getElementById('hpz-grid').innerHTML=blocks.map(b=>`<div class="hpz-block"><div class="hpz-block-lbl">${b.lbl}</div><div class="hpz-block-val" style="color:${b.color}">${b.val}</div></div>`).join('');
+
+  const cw=document.getElementById('hpz-chart-wrap');
+  cw.style.display=o.chart?'block':'none';
+  if(chartPrintInstance){ chartPrintInstance.destroy(); chartPrintInstance=null; }
+  if(o.chart && historyEntries.length){
+    const upTo=[...historyEntries].sort((a,b)=>a.date.localeCompare(b.date)).filter(x=>x.date<=e.date);
+    chartPrintInstance=new Chart(document.getElementById('chart-print').getContext('2d'),{
+      type:'line',
+      data:{ labels:upTo.map(x=>formatMonth(x.date)), datasets:[
+        {label:'CA', data:upTo.map(x=>x.caM), borderColor:'#444', borderWidth:2, fill:false, tension:.35, pointRadius:3},
+        {label:'Charges', data:upTo.map(x=>x.charges), borderColor:'#b86400', borderWidth:2, fill:false, tension:.35, pointRadius:3},
+        {label:'Net', data:upTo.map(x=>x.net), borderColor:'#1a8c5b', borderWidth:2, fill:false, tension:.35, pointRadius:3},
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false, animation:false, plugins:{legend:{display:true}},
+        scales:{ x:{title:{display:true,text:'Période'}}, y:{title:{display:true,text:'€ / mois'},ticks:{callback:v=>v.toLocaleString('fr-FR')+'€'}} }
+      }
+    });
+  }
+
+  closePdfModal();
+  setTimeout(()=>{ const t=document.title; document.title=`Releve_${e.date}_${e.label.replace(/\s/g,'_')}`; window.print(); document.title=t; },150);
+}
+
+const HIST_KEY='fiscal_history_v1';
+function saveHistoryToStorage(){ try{ localStorage.setItem(HIST_KEY,JSON.stringify(historyEntries)); }catch(ex){} }
+function loadHistoryFromStorage(){ try{ const r=localStorage.getItem(HIST_KEY); if(r){ historyEntries=JSON.parse(r); renderHistory(); } }catch(ex){} }
+
+// =====================
+//  EXONÉRATION IR
+// =====================
+let exoIROn    = false;
+let exoUnit    = 'm';   // 'm' ou 'a'
+let exoFactor  = 0;     // 0 = exonéré total, 0..1 = facteur résiduel IR
+
+function toggleExoIR() {
+  exoIROn = !exoIROn;
+  const sw   = document.getElementById('exo-ir-switch');
+  const panel= document.getElementById('exo-ir-panel');
+  const lbl  = document.getElementById('exo-ir-lbl');
+  sw.classList.toggle('on', exoIROn);
+  panel.style.display = exoIROn ? 'block' : 'none';
+  lbl.style.color     = exoIROn ? 'var(--muted)' : 'var(--blue)';
+  if (exoIROn) {
+    // Pré-remplir la date de début avec le mois actuel
+    const now = new Date();
+    const d = document.getElementById('exo-debut');
+    if (d && !d.value) d.value = now.toISOString().slice(0,7);
+    calcExoIR();
+  }
+  calc(); markDirty();
+}
+
+function setExoUnit(unit, btn) {
+  exoUnit = unit;
+  document.querySelectorAll('#exo-unit-m,#exo-unit-a').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  calcExoIR();
+}
+
+function calcExoIR() {
+  const type    = document.getElementById('exo-type').value;
+  const pctWrap = document.getElementById('exo-pct-wrap');
+  const duree   = parseInt(document.getElementById('exo-duree').value) || 12;
+  const debut   = document.getElementById('exo-debut').value;
+  const resDom  = document.getElementById('exo-result');
+
+  // Afficher champ % si partielle
+  pctWrap.style.display = type === 'partielle' ? 'block' : 'none';
+
+  // Calculer durée en mois
+  const dureeMois = exoUnit === 'a' ? duree*12 : duree;
+  const dureeAns  = (dureeMois/12).toFixed(1).replace('.0','');
+
+  // Calculer la date de fin
+  let finStr = '';
+  if (debut) {
+    const [y,m] = debut.split('-').map(Number);
+    const fin = new Date(y, m - 1 + dureeMois);
+    finStr = `${fin.toLocaleString('fr-FR',{month:'long'})} ${fin.getFullYear()}`;
+  }
+
+  // Calculer le facteur IR résiduel
+  if (type === 'totale') {
+    exoFactor = 0;
+  } else if (type === 'partielle') {
+    const pct = parseFloat(document.getElementById('exo-pct').value) || 50;
+    exoFactor = pct / 100;
+  } else if (type === 'degressive') {
+    // ACRE-style : 75% exo an1, 50% an2, 25% an3
+    exoFactor = -1; // flag spécial
+  }
+
+  // Résumé
+  const typeLabel = type==='totale'?'Totale (IR = 0 €)':type==='partielle'?`Partielle (${document.getElementById('exo-pct').value||50}% de l'IR normal)`:'Dégressive (75% → 50% → 25%)';
+  resDom.innerHTML = `
+    Durée : <b style="color:var(--green)">${dureeMois} mois</b> (${dureeAns} an${dureeAns!=='1'?'s':''})<br>
+    ${debut?`Période : <b style="color:var(--text-dim)">${document.getElementById('exo-debut').value} → ${finStr}</b><br>`:''}
+    Type : <b style="color:var(--text-dim)">${typeLabel}</b><br>
+    ${type==='degressive'?`Détail ACRE : <b style="color:var(--green)">75%</b> d'exo an 1 · <b style="color:var(--orange)">50%</b> an 2 · <b style="color:var(--muted)">25%</b> an 3`:''}
+  `;
+
+  calc();
+}
+
+// Retourne le facteur multiplicateur IR selon la date actuelle et les params d'exo
+function getIRFactor() {
+  if (!exoIROn) return 1;
+  const debut = document.getElementById('exo-debut').value;
+  if (!debut) return 0; // pas de date → exonéré total par défaut
+
+  const now      = new Date();
+  const debutD   = new Date(debut+'-01');
+  const moisElap = (now.getFullYear()-debutD.getFullYear())*12 + (now.getMonth()-debutD.getMonth());
+  const dureeMois= exoUnit==='a' ? (parseInt(document.getElementById('exo-duree').value)||12)*12 : (parseInt(document.getElementById('exo-duree').value)||12);
+
+  // Plus dans la période → pas d'exo
+  if (moisElap >= dureeMois) return 1;
+
+  const type = document.getElementById('exo-type').value;
+  if (type === 'totale')    return 0;
+  if (type === 'partielle') return (parseFloat(document.getElementById('exo-pct').value)||50)/100;
+  if (type === 'degressive') {
+    // ACRE dégressive : tranche par année
+    const anneeExo = Math.floor(moisElap/12);
+    if (anneeExo===0) return 0.25;  // 75% exo → 25% résiduel
+    if (anneeExo===1) return 0.50;
+    if (anneeExo===2) return 0.75;
+    return 1;
+  }
+  return 0;
+}
+
+// =====================
+//  ALERTE TVA
+// =====================
+const TVA_SEUILS = [
+  { label:'BNC / Prestataires de services', seuil:36800 },
+  { label:'Vente de marchandises / BIC', seuil:91900 },
+];
+function updateTVAAlert() {
+  if (!sharedCaM) { document.getElementById('tva-alert').style.display='none'; updateTVADetail(); return; }
+  const caA=sharedCaM*12, seuil=currentRegime==='bic-v'?TVA_SEUILS[1]:TVA_SEUILS[0];
+  const pctV=Math.min(caA/seuil.seuil*100,110);
+  const alert=document.getElementById('tva-alert'), bar=document.getElementById('tva-progress-bar');
+  const card=document.getElementById('tva-alert-card'), title=document.getElementById('tva-alert-title');
+  const body=document.getElementById('tva-alert-body'), lbl=document.getElementById('tva-progress-lbl');
+  if (caA>=seuil.seuil) {
+    alert.style.display='block'; bar.style.width='100%'; bar.style.background='var(--red)';
+    card.style.borderColor='rgba(255,96,96,.4)'; card.style.background='rgba(255,96,96,.06)';
+    title.style.color='var(--red)'; title.textContent='🚨 Seuil TVA dépassé';
+    body.textContent='CA prévisionnel '+fmt(caA)+'/an dépasse le seuil. Vous êtes assujetti à la TVA.';
+    lbl.textContent=fmt(caA)+' / '+seuil.seuil.toLocaleString('fr-FR')+' €';
+  } else if (caA>=seuil.seuil*0.85) {
+    alert.style.display='block'; bar.style.width=pctV+'%'; bar.style.background='var(--orange)';
+    card.style.borderColor='rgba(255,170,64,.35)'; card.style.background='rgba(255,170,64,.06)';
+    title.style.color='var(--orange)'; title.textContent='⚠️ Approche du seuil TVA';
+    body.textContent='Il reste '+fmt(Math.round(seuil.seuil-caA))+' avant le seuil ('+seuil.seuil.toLocaleString('fr-FR')+' €/an).';
+    lbl.textContent=fmt(caA)+' / '+seuil.seuil.toLocaleString('fr-FR')+' €';
+  } else { alert.style.display='none'; }
+  updateTVADetail();
+}
+function updateTVADetail() {
+  const el=document.getElementById('tva-detail'); if(!el) return;
+  const caA=sharedCaM*12||0;
+  el.innerHTML=TVA_SEUILS.map(s=>{
+    const p=caA>0?Math.min(caA/s.seuil*100,110):0, cls=p>=100?'danger':p>=85?'warn':'';
+    const reste=Math.max(0,s.seuil-caA);
+    return '<div class="tva-item '+cls+'"><div style="flex:1"><div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-bottom:4px;">'+s.label+'</div><div style="font-family:\'Syne\',sans-serif;font-size:13px;font-weight:700;color:'+(p>=100?'var(--red)':p>=85?'var(--orange)':'var(--text)')+';margin-bottom:6px;">'+(p>=100?'Dépassé':'Seuil : '+s.seuil.toLocaleString('fr-FR')+' €/an')+'</div><div class="tva-bar-wrap"><div class="tva-bar" style="width:'+Math.min(p,100)+'%;background:'+(p>=100?'var(--red)':p>=85?'var(--orange)':'var(--green)')+'"></div></div></div><div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0;">'+(p>=100?'⛔ Assujetti':'Reste <b style="color:var(--text-dim)">'+fmt(reste)+'</b>')+'</div></div>';
+  }).join('');
+}
+
+// =====================
+//  OBJECTIF NET → CA
+// =====================
+function calcObjectif() {
+  const net=parseFloat(document.getElementById('obj-net').value)||0;
+  const r=document.getElementById('obj-result');
+  if(!net){r.style.display='none';return;}
+  r.style.display='block';
+  let lo=net,hi=net*8,ca=0;
+  for(let i=0;i<80;i++){ca=(lo+hi)/2;const n=ca-ca*CHARGES-calcIR(ca*12*(1-ABAT))/12;if(n<net)lo=ca;else hi=ca;}
+  const ch=ca*CHARGES,ir=calcIR(ca*12*(1-ABAT))/12,tot=ch+ir;
+  set('obj-ca',fmt(Math.ceil(ca))); set('obj-ca-a',fmt(Math.ceil(ca)*12));
+  set('obj-ch',fmt(Math.round(ch))); set('obj-ir',fmt(Math.round(ir)));
+  set('obj-tot',fmt(Math.round(tot))); set('obj-taux',(tot/ca*100).toFixed(1)+'%');
+  set('obj-regime',REGIMES[currentRegime]?.label||'—');
+}
+
+// =====================
+//  PRÉVISIONNEL
+// =====================
+function updatePrevisionnel() {
+  const el=document.getElementById('previsionnel-content'); if(!el) return;
+  const year=new Date().getFullYear();
+  const entries=historyEntries.filter(e=>e.date.startsWith(year)).sort((a,b)=>a.date.localeCompare(b.date));
+  if(!entries.length){el.innerHTML='<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--muted);padding:16px 0;">Aucune entrée pour '+year+'. Ajoutez des mois pour activer le prévisionnel.</div>';return;}
+  const moisFaits=entries.length,moyCA=entries.reduce((s,e)=>s+e.caM,0)/moisFaits,moyNet=entries.reduce((s,e)=>s+e.net,0)/moisFaits;
+  const totCA=entries.reduce((s,e)=>s+e.caM,0),totNet=entries.reduce((s,e)=>s+e.net,0);
+  const projCA=Math.round(totCA+moyCA*(12-moisFaits)),projNet=Math.round(totNet+moyNet*(12-moisFaits));
+  const seuilTVA=currentRegime==='bic-v'?91900:36800;
+  const tvaColor=projCA>=seuilTVA?'var(--red)':projCA>=seuilTVA*.85?'var(--orange)':'var(--green)';
+  const tvaMsg=projCA>=seuilTVA?'⛔ Dépassement seuil TVA prévu':projCA>=seuilTVA*.85?'⚠️ Risque seuil TVA':'✓ En dessous du seuil TVA';
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;"><div class="mc"><div class="ml">Mois renseignés</div><div class="mv" style="color:var(--text-dim)">'+moisFaits+'/12</div></div><div class="mc"><div class="ml">CA moy./mois</div><div class="mv" style="color:var(--orange)">'+fmt(Math.round(moyCA))+'</div></div><div class="mc"><div class="ml">Net moy./mois</div><div class="mv" style="color:var(--green)">'+fmt(Math.round(moyNet))+'</div></div></div><div style="background:var(--glass-bg-deep);border:1px solid var(--brd);border-radius:12px;padding:14px;margin-bottom:12px;"><div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Projection annuelle</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--muted);margin-bottom:3px;">CA projeté</div><div style="font-family:\'DM Mono\',monospace;font-size:20px;color:var(--acc)">'+fmt(projCA)+'</div></div><div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--muted);margin-bottom:3px;">Net projeté</div><div style="font-family:\'DM Mono\',monospace;font-size:20px;color:var(--green)">'+fmt(projNet)+'</div></div></div></div><div style="display:flex;align-items:center;gap:10px;font-family:\'DM Mono\',monospace;font-size:11px;background:var(--glass-bg-deep);border:1px solid '+(tvaColor==='var(--green)'?'var(--brd)':tvaColor)+';border-radius:10px;padding:10px 14px;"><span style="color:'+tvaColor+';font-weight:600;">'+tvaMsg+'</span><span style="color:var(--muted);margin-left:auto;">'+fmt(projCA)+' / '+seuilTVA.toLocaleString('fr-FR')+' €</span></div>';
+}
+
+// =====================
+//  RETRAITE
+// =====================
+function calcRetraite() {
+  const el = document.getElementById('ret-result');
+  if (!el) return;
+
+  const age     = parseInt(document.getElementById('ret-age').value) || 30;
+  const dejaCot = parseInt(document.getElementById('ret-annees').value) || 0;
+
+  // ── Source de CA : priorité à la moyenne historique, sinon onglet Calcul ──
+  const histEntries = historyEntries.filter(e => e.caM > 0);
+  const hasHist     = histEntries.length > 0;
+  const moyHistM    = hasHist
+    ? Math.round(histEntries.reduce((s,e) => s+e.caM, 0) / histEntries.length)
+    : 0;
+  const caM         = hasHist ? moyHistM : (sharedCaM || 0);
+  const caA         = caM * 12;
+
+  // ── Source des données ──
+  const sourceEl = document.getElementById('ret-source-info');
+  if (sourceEl) {
+    if (hasHist) {
+      const moisCount = histEntries.length;
+      const years     = [...new Set(histEntries.map(e => e.date.slice(0,4)))];
+      sourceEl.innerHTML = 'Basé sur <b style="color:var(--acc)">' + moisCount + ' mois</b> d\'historique (' + years.join(', ') + ') · Moyenne CA : <b style="color:var(--orange)">' + fmt(caM) + '/mois</b>';
+      sourceEl.style.borderColor = 'rgba(80,240,160,.25)';
+      sourceEl.style.background  = 'rgba(80,240,160,.05)';
+    } else {
+      sourceEl.innerHTML = 'Aucun historique — basé sur le CA actuel de l\'onglet Calcul : <b style="color:var(--orange)">' + fmt(caM) + '/mois</b>';
+      sourceEl.style.borderColor = 'rgba(255,170,64,.25)';
+      sourceEl.style.background  = 'rgba(255,170,64,.05)';
+    }
+  }
+
+  if (!caA) {
+    el.innerHTML = '<p style="font-family:DM Mono,monospace;font-size:11px;color:var(--muted);padding:8px 0;">Saisissez votre CA dans l\'onglet Calcul ou ajoutez des mois dans l\'historique.</p>';
+    return;
+  }
+
+  const ageRetraite = 64;
+  const PASS        = 46368;
+
+  // ── Trimestres ──
+  // Déjà cotisés (carrière antérieure)
+  const triDejaAcquis    = dejaCot * 4;
+  // Projetés avec le CA historique jusqu'à 64 ans
+  const anneesRestantes  = Math.max(0, ageRetraite - age);
+  // Trimestres validés/an : 1 trimestre = 150h SMIC ≈ 1690€ brut en 2024
+  // En BNC, on valide des trimestres selon l'assiette cotisée
+  const assietteAn       = Math.min(caA * (1 - ABAT), PASS);
+  const triParAn         = Math.min(4, Math.max(0, Math.floor(assietteAn / (1690 * 4) * 4)));
+  const triProjetes      = triParAn * anneesRestantes;
+  const triTotal         = Math.min(176, triDejaAcquis + triProjetes);
+  const manquants        = Math.max(0, 176 - triTotal);
+
+  // ── Points CNAV ──
+  const pointsParAn  = assietteAn > 0 ? +(assietteAn / PASS * 43.16).toFixed(1) : 0;
+  const pointsProj   = +(pointsParAn * anneesRestantes).toFixed(0);
+  // Estimation points déjà acquis (approx. proportionnelle aux années cotisées)
+  const pointsDejaAcquis = +(pointsParAn * dejaCot).toFixed(0);
+  const pointsTotal  = pointsDejaAcquis + pointsProj;
+
+  // ── Pension ──
+  const valPoint     = 1.4294;
+  const pensionBrute = Math.round(pointsTotal * valPoint / 12);
+  const pensionNette = Math.round(pensionBrute * 0.90);
+  const txRemp       = caM > 0 ? Math.round(pensionNette / caM * 100) : 0;
+
+  // ── Rendu ──
+  function kpi(lbl, val, col, sub) {
+    var d  = document.createElement('div');
+    d.className = 'ret-kpi'; d.style.marginBottom = '6px';
+    d.style.flexDirection = 'column'; d.style.alignItems = 'flex-start'; d.style.gap = '2px';
+    var l = document.createElement('span');
+    l.style.cssText = 'font-family:DM Mono,monospace;font-size:10px;color:var(--muted)';
+    l.textContent = lbl;
+    var v = document.createElement('span');
+    v.style.cssText = 'font-family:DM Mono,monospace;font-size:14px;font-weight:500;color:' + col;
+    v.textContent = val;
+    d.appendChild(l); d.appendChild(v);
+    if (sub) {
+      var s = document.createElement('span');
+      s.style.cssText = 'font-family:DM Mono,monospace;font-size:10px;color:var(--muted)';
+      s.textContent = sub;
+      d.appendChild(s);
+    }
+    return d.outerHTML;
+  }
+
+  el.innerHTML =
+    // Séparateur trimestres
+    '<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:4px 0 8px">Trimestres</div>' +
+    kpi('Déjà acquis (carrière antérieure)', triDejaAcquis + ' / 176', triDejaAcquis > 0 ? 'var(--acc)' : 'var(--muted)',
+        dejaCot + ' an' + (dejaCot > 1 ? 's' : '') + ' × 4 trimestres') +
+    kpi('Projetés d\'ici ' + ageRetraite + ' ans', triProjetes + ' trimestres',
+        triProjetes > 80 ? 'var(--blue)' : 'var(--muted)',
+        triParAn + ' trim./an × ' + anneesRestantes + ' ans restantes') +
+    kpi('Total projeté', triTotal + ' / 176', triTotal >= 176 ? 'var(--green)' : 'var(--orange)',
+        triTotal >= 176 ? 'Taux plein atteint ✓' : manquants + ' trimestres manquants pour le taux plein') +
+
+    // Séparateur pension
+    '<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:12px 0 8px">Pension estimée</div>' +
+    kpi('Points CNAV projetés', pointsTotal.toLocaleString('fr-FR') + ' pts', 'var(--acc)',
+        pointsDejaAcquis + ' acquis + ' + pointsProj + ' projetés') +
+    kpi('Pension brute', fmt(pensionBrute) + '/mois', 'var(--blue)', 'Avant CSG/CRDS') +
+    kpi('Pension nette', fmt(pensionNette) + '/mois', 'var(--green)', 'Après déductions (~10%)') +
+    kpi('Taux de remplacement', txRemp + '% du CA moyen',
+        txRemp >= 50 ? 'var(--green)' : txRemp >= 30 ? 'var(--orange)' : 'var(--red)',
+        'Par rapport à ' + fmt(caM) + '/mois de CA moyen');
+}
+
+// =====================
+//  SASU/EURL
+// =====================
+function calcSociete() {
+  const salM=parseFloat(document.getElementById('soc-sal').value)||0;
+  const divA=parseFloat(document.getElementById('soc-div').value)||0;
+  const caA=(sharedCaM||0)*12, el=document.getElementById('soc-result');
+  if(!salM&&!divA){el.innerHTML='';return;}
+  const chMicroA=caA*CHARGES,irMicroA=calcIR(caA*(1-ABAT)),netMicroA=caA-chMicroA-irMicroA;
+  const salA=salM*12,cotPatro=salA*0.45,cotSal=salA*0.22,netSalA=salA-cotSal;
+  const benefice=Math.max(0,caA-salA-cotPatro);
+  const IS=benefice<=42500?benefice*0.15:42500*0.15+(benefice-42500)*0.25;
+  const divNet=divA-divA*0.30, netSocA=netSalA+divNet, diff=netSocA-netMicroA;
+  el.innerHTML='<table class="soc-table"><tr><td></td><td style="text-align:right;color:var(--muted);font-size:9px;letter-spacing:.1em;">MICRO</td><td style="text-align:right;color:var(--muted);font-size:9px;letter-spacing:.1em;">SOCIÉTÉ</td></tr><tr><td>CA annuel</td><td>'+fmt(caA)+'</td><td>'+fmt(caA)+'</td></tr><tr><td>Charges sociales</td><td style="color:var(--orange)">'+fmt(Math.round(chMicroA))+'</td><td style="color:var(--orange)">'+fmt(Math.round(cotPatro+cotSal))+'</td></tr><tr><td>Impôt (IR/IS+PFU)</td><td style="color:var(--blue)">'+fmt(Math.round(irMicroA))+'</td><td style="color:var(--blue)">'+fmt(Math.round(IS+divA*0.30))+'</td></tr><tr><td><b>Net mensuel</b></td><td style="color:var(--green)">'+fmt(Math.round(netMicroA/12))+'</td><td style="color:var(--green)">'+fmt(Math.round(netSocA/12))+'</td></tr></table><div style="margin-top:10px;background:'+(diff>0?'rgba(80,240,160,.07)':'rgba(255,96,96,.07)')+';border:1px solid '+(diff>0?'rgba(80,240,160,.25)':'rgba(255,96,96,.25)')+';border-radius:10px;padding:10px 14px;font-family:\'DM Mono\',monospace;font-size:11px;">'+(diff>0?'✓ Société avantageuse de <b style="color:var(--green)">'+fmt(Math.abs(Math.round(diff/12)))+'/mois</b>':'✓ Micro avantageuse de <b style="color:var(--acc)">'+fmt(Math.abs(Math.round(diff/12)))+'/mois</b>')+'<div style="color:var(--muted);font-size:10px;margin-top:3px;">Hors frais comptables (1 500–4 000 €/an) · Indicatif</div></div>';
+}
+
+// =====================
+//  IMPORT RELEVÉ BANCAIRE
+// =====================
+let bankSep        = ';';
+let bankDir        = 'credit';   // 'credit' | 'all'
+let bankParsed     = [];         // lignes brutes parsées
+let bankHeaders    = [];
+let bankMonthData  = [];         // [{ym, label, caM, txCount, txList, selected}]
+let bankColMap     = { date:null, amount:null, label:null };
+
+// Formats de date courants des banques FR
+const DATE_PATTERNS = [
+  { re:/^(\d{2})\/(\d{2})\/(\d{4})$/, fn:m => `${m[3]}-${m[2]}-${m[1]}` },  // DD/MM/YYYY
+  { re:/^(\d{4})-(\d{2})-(\d{2})$/,   fn:m => `${m[1]}-${m[2]}-${m[3]}` },  // YYYY-MM-DD
+  { re:/^(\d{2})-(\d{2})-(\d{4})$/,   fn:m => `${m[3]}-${m[2]}-${m[1]}` },  // DD-MM-YYYY
+  { re:/^(\d{2})\.(\d{2})\.(\d{4})$/, fn:m => `${m[3]}-${m[2]}-${m[1]}` },  // DD.MM.YYYY
+];
+
+function parseDate(str) {
+  if (!str) return null;
+  str = str.trim().replace(/"/g,'');
+  for (const p of DATE_PATTERNS) {
+    const m = str.match(p.re);
+    if (m) return p.fn(m);
+  }
+  return null;
+}
+
+function parseAmount(str) {
+  if (!str) return null;
+  // Gérer les formats FR : 1.234,56 → 1234.56 ou 1 234,56
+  let s = str.trim().replace(/"/g,'').replace(/\s/g,'');
+  // Format FR avec virgule décimale et point milliers
+  if (/^\d{1,3}(\.\d{3})*(,\d+)?$/.test(s)) s = s.replace(/\./g,'').replace(',','.');
+  // Format FR avec virgule décimale simple
+  else if (/^-?\d+(,\d+)?$/.test(s)) s = s.replace(',','.');
+  const v = parseFloat(s);
+  return isNaN(v) ? null : v;
+}
+
+function setBankSep(sep, btn) {
+  bankSep = sep;
+  document.querySelectorAll('#bank-sep-semi,#bank-sep-comma,#bank-sep-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function setBankDir(dir, btn) {
+  bankDir = dir;
+  document.querySelectorAll('#bank-dir-credit,#bank-dir-all').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function bankDragOver(e) { e.preventDefault(); document.getElementById('bank-drop-zone').classList.add('drag-over'); }
+function bankDrop(e)     { e.preventDefault(); document.getElementById('bank-drop-zone').classList.remove('drag-over'); if(e.dataTransfer.files[0]) processBankFile(e.dataTransfer.files[0]); }
+function loadBankCSV(input) { if(input.files[0]) processBankFile(input.files[0]); input.value=''; }
+
+function processBankFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const text = ev.target.result;
+
+    // Split lignes
+    const allLines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(function(l){ return l.trim(); });
+    if (allLines.length < 2) { showToast('Fichier vide ou illisible.'); return; }
+
+    // Auto-détection séparateur
+    const sample = allLines[0];
+    const counts = { ';': (sample.match(/;/g)||[]).length, ',': (sample.match(/,/g)||[]).length, '\t': (sample.match(/\t/g)||[]).length };
+    bankSep = Object.keys(counts).reduce(function(a,b){ return counts[a]>=counts[b]?a:b; });
+
+    // Parse headers
+    bankHeaders = smartSplit(allLines[0], bankSep).map(function(h){ return h.trim().replace(/^"+|"+$/g,''); });
+
+    // Parse rows
+    bankParsed = [];
+    for (var i=1; i<allLines.length; i++) {
+      var cells = smartSplit(allLines[i], bankSep);
+      var obj = {};
+      bankHeaders.forEach(function(h,j){ obj[h] = (cells[j]||'').trim().replace(/^"+|"+$/g,''); });
+      if (Object.values(obj).some(function(v){ return v; })) bankParsed.push(obj);
+    }
+
+    if (!bankParsed.length) { showToast('Aucune ligne de données trouvée.'); return; }
+
+    autoDetectBankCols();
+    renderBankMapping();
+    processAndShowModal();
+  };
+  reader.onerror = function(){ showToast('Erreur de lecture du fichier.'); };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function renderBankMapping() {
+  var el = document.getElementById('bank-col-mapping');
+  if (!el) return;
+
+  function makeOpts(selected) {
+    return [''].concat(bankHeaders).map(function(h){
+      return '<option value="'+h+'"'+(h===selected?' selected':'')+'>'+( h||'— Aucun —')+'</option>';
+    }).join('');
+  }
+
+  el.innerHTML =
+    '<div class="bank-col-row">' +
+      '<span class="bank-col-lbl">📅 Colonne date</span>' +
+      '<select class="bank-col-sel" onchange="bankColMap.date=this.value;processAndShowModal()">' + makeOpts(bankColMap.date||'') + '</select>' +
+    '</div>' +
+    '<div class="bank-col-row">' +
+      '<span class="bank-col-lbl">💶 Colonne montant</span>' +
+      '<select class="bank-col-sel" onchange="bankColMap.amount=this.value;processAndShowModal()">' + makeOpts(bankColMap.amount||'') + '</select>' +
+    '</div>' +
+    '<div class="bank-col-row">' +
+      '<span class="bank-col-lbl">📝 Colonne libellé</span>' +
+      '<select class="bank-col-sel" onchange="bankColMap.label=this.value||null;processAndShowModal()">' + makeOpts(bankColMap.label||'') + '</select>' +
+    '</div>';
+}
+
+
+// =====================
+//  IMPORT CSV
+// =====================
+let csvPendingData=[];
+function importCSV(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const text=e.target.result, lines=text.trim().split(/\r?\n/);
+    const sep=lines[0].includes(';')?';':',';
+    const headers=lines[0].split(sep).map(h=>h.trim().replace(/"/g,'').toLowerCase());
+    const rows=lines.slice(1).map(l=>{const cells=l.split(sep).map(c=>c.trim().replace(/"/g,''));const obj={};headers.forEach((h,i)=>obj[h]=cells[i]||'');return obj;}).filter(r=>Object.values(r).some(v=>v));
+    const dateCol=headers.find(h=>/date|mois|period/i.test(h));
+    const caCol=headers.find(h=>/^ca$|revenu|chiffre|montant|amount/i.test(h));
+    const labelCol=headers.find(h=>/label|lib|nom|desc/i.test(h));
+    if(!dateCol||!caCol){document.getElementById('csv-info').textContent='⚠️ Colonnes requises : date (YYYY-MM) et CA.';document.getElementById('csv-preview').innerHTML='';document.getElementById('csv-confirm-btn').style.display='none';document.getElementById('csv-modal').style.display='flex';return;}
+    csvPendingData=rows.map(r=>({date:(r[dateCol]||'').slice(0,7),label:r[labelCol]||'Import CSV',caM:parseFloat((r[caCol]||'').replace(',','.'))||0})).filter(r=>r.date.match(/^\d{4}-\d{2}$/)&&r.caM>0);
+    document.getElementById('csv-preview').innerHTML='<table class="csv-preview-table"><thead><tr><th>Mois</th><th>Label</th><th>CA</th></tr></thead><tbody>'+csvPendingData.slice(0,15).map(r=>'<tr><td>'+r.date+'</td><td>'+r.label+'</td><td>'+fmt(r.caM)+'</td></tr>').join('')+'</tbody></table>';
+    document.getElementById('csv-info').textContent=csvPendingData.length+' ligne(s) détectées';
+    document.getElementById('csv-confirm-btn').style.display='block';
+    document.getElementById('csv-modal').style.display='flex';
+  };
+  reader.readAsText(file); input.value='';
+}
+function confirmCSVImport() {
+  csvPendingData.forEach(row=>{const auto=computeFromCA(row.caM);historyEntries.push({id:histNextId(),date:row.date,label:row.label,caM:row.caM,...auto,regime:REGIMES[currentRegime]?.label||'—',note:'Import CSV'});});
+  historyEntries.sort((a,b)=>a.date.localeCompare(b.date));
+  saveHistoryToStorage(); renderHistory(); markDirty();
+  document.getElementById('csv-modal').style.display='none';
+  showToast('✓ '+csvPendingData.length+' entrée(s) importée(s)');
+  csvPendingData=[];
+}
+
+// =====================
+//  EXPORT
+// =====================
+function exportFormat(type) {
+  if(!historyEntries.length){showToast('Aucune entrée à exporter.');return;}
+  const sorted=[...historyEntries].sort((a,b)=>a.date.localeCompare(b.date));
+  if(type==='csv'){
+    const header='Date,Label,CA,Charges,IR,Total,Net,Taux,Regime,Note';
+    const rows=sorted.map(e=>[e.date,'"'+e.label+'"',e.caM,e.charges.toFixed(2),e.ir.toFixed(2),e.total.toFixed(2),e.net.toFixed(2),e.taux,'"'+e.regime+'"','"'+(e.note||'')+'"'].join(','));
+    dlFile('historique_fiscal.csv',[header,...rows].join('\n'),'text/csv');
+    showToast('✓ Export CSV téléchargé');
+  } else if(type==='json'){
+    dlFile('historique_fiscal.json',JSON.stringify({exportDate:new Date().toISOString(),entries:sorted},null,2),'application/json');
+    showToast('✓ Export JSON téléchargé');
+  } else if(type==='pdf') window.print();
+}
+function dlFile(name,content,type){const blob=new Blob(['\uFEFF'+content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+
+// =====================
+//  LIEN DE PARTAGE
+// =====================
+function genererLien() {
+  const ca=document.getElementById('ca').value||'0';
+  const p=new URLSearchParams({regime:currentRegime,periode,ca});
+  const url=location.origin+location.pathname+'?'+p;
+  document.getElementById('share-link-full').value=url;
+  document.getElementById('share-copied').style.display='none';
+  document.getElementById('share-modal').style.display='flex';
+}
+function loadFromURL() {
+  const p=new URLSearchParams(location.search);
+  if(p.has('regime')){const btn=document.querySelector('[data-regime="'+p.get('regime')+'"]');if(btn)setRegime(btn);}
+  if(p.has('ca'))document.getElementById('ca').value=p.get('ca');
+  if(p.has('ca')||p.has('regime'))calc();
+}
+
+// =====================
+//  TOAST
+// =====================
+let _toastTimer;
+function showToast(msg){const t=document.getElementById('global-toast');t.textContent=msg;t.style.display='block';clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>t.style.display='none',2800);}
+
+// Hooks
+const _origShowTabOutils=showTab;
+showTab=function(name,btn){
+  _origShowTabOutils(name,btn);
+  if(name==='outils'){updateTVADetail();updatePrevisionnel();calcRetraite();}
+};
+const _origCalcTVA=calc;
+calc=function(){_origCalcTVA();updateTVAAlert();};
+
+// Init
+initTheme();
+updateRegimeBadge();
+initDefaultFrais();
+loadData();
+loadHistoryFromStorage();
+loadFromURL();
+calc();
+calcCmp();
+
+</script>
+</body>
+</html>
